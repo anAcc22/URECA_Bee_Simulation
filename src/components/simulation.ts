@@ -214,10 +214,10 @@ class Bee {
   static readonly beeRadius = 15;
   static readonly beeLegs = 4;
 
-  static readonly detachChance = 0.0005;
+  static readonly detachChance = 0.0006;
   static readonly flyTowardsQueenChance = 0.1;
 
-  static readonly queenChance = 0.01;
+  static readonly queenChance = 0.02;
   static readonly grav = 0.06;
   static readonly k = 0.02;
 
@@ -391,11 +391,13 @@ class Bee {
       const m = this.isReverseNoise ? -0.05 : 0.05;
       const d = unitDiff(queenPos, this.pos);
       const flyTowardsQueen = booleanChance(Bee.flyTowardsQueenChance);
+
       this.vel.x += m * PerlinNoise.getFBM(this.xTime);
       this.vel.y += m * PerlinNoise.getFBM(this.yTime);
+
       if (flyTowardsQueen) {
-        this.vel.x += d.x / 3;
-        this.vel.y += d.y / 6;
+        this.vel.x += d.x / 10;
+        this.vel.x += d.y / 10;
       }
     }
   }
@@ -418,8 +420,9 @@ class Bee {
           this.attachSet.pop();
         }
         this.vel = this.det;
+        this.vel.y = 1;
         this.det = { x: 0, y: 0 };
-        this.cooldown = 30;
+        this.cooldown = 15;
         return;
       }
     }
@@ -473,12 +476,6 @@ class Bee {
       this.attachSet.push(v as Vector2D);
     }
 
-    // TODO: <<- fix convergence to queen ->>
-    // const d = unitDiff(queenPos, this.pos);
-    //
-    // a.x += d.x / 100;
-    // a.y += d.y / 100;
-
     for (const i of this.supportSet) {
       const d = unitDiff(this.pos, bees.get(i as number)!.pos);
       let m = 2 * Bee.beeRadius;
@@ -511,23 +508,22 @@ class Bee {
     a.y = clamp(a.y, -1, 1);
 
     if (!this.isAttachedToBoard()) {
+      const d = unitDiff(queenPos, this.pos);
+      a.x += d.x / 30;
+      a.y += d.y / 30;
       this.vel.x += a.x;
     } else {
-      // TODO: <<- fix convergence to queen position ->>
-      // const d = unitDiff(queenPos, this.pos);
-      // const toMoveTowardsQueen = booleanChance(Bee.queenChance);
-      //
-      // if (toMoveTowardsQueen) {
-      //   a.x += (d.x / 10);
-      //   a.y += (d.y / 10);
-      //   this.vel.x += a.x;
-      // }
+      const d = unitDiff(queenPos, this.pos);
+      const toMoveTowardsQueen = booleanChance(Bee.queenChance);
+      if (toMoveTowardsQueen) {
+        this.vel.x += d.x / 30;
+      }
     }
 
     this.vel.y += a.y;
 
-    this.vel.x *= 0.8;
-    this.vel.y *= 0.8;
+    this.vel.x *= 0.75;
+    this.vel.y *= 0.75;
   }
 
   update() {
@@ -598,7 +594,7 @@ export function resizeSimulation(width: number, height: number) {
   canvasWidth = width;
   canvasHeight = height;
   rod.resetPoints();
-  queenPos = { x: canvasWidth / 2, y: rod.rodBound + Bee.nodeRadius };
+  queenPos = { x: canvasWidth / 2, y: canvasHeight };
 }
 
 export function setSimulationStatus(newStatus: Status) {
@@ -629,11 +625,11 @@ export function initSimulation(c: CanvasRenderingContext2D) {
         if (frames % 50 === 0 && curCnt < beeCnt) {
           const spawnLeft = booleanChance(0.5);
           if (spawnLeft) {
-            bees.set(curCnt, new Bee(curCnt, 30, canvasHeight - 30, 1, -0.1));
+            bees.set(curCnt, new Bee(curCnt, 30, canvasHeight - 30, 1, -1));
           } else {
             bees.set(
               curCnt,
-              new Bee(curCnt, canvasWidth - 30, canvasHeight - 30, -1, -0.1),
+              new Bee(curCnt, canvasWidth - 30, canvasHeight - 30, -1, -1),
             );
           }
           curCnt++;

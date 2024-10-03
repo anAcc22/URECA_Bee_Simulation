@@ -11,6 +11,17 @@ function euclidDist(u: Vector2D, v: Vector2D) {
   return Math.sqrt(Math.pow(u.x - v.x, 2) + Math.pow(u.y - v.y, 2));
 }
 
+function unitDiff(u: Vector2D, v: Vector2D) {
+  /* NOTE: <<- Implementation ->>
+   * Compute the unit vector of `u` - `v`.
+   */
+  const ans = { x: u.x - v.x, y: u.y - v.y };
+  const mag = euclidDist(ans, { x: 0, y: 0 });
+  ans.x /= mag;
+  ans.y /= mag;
+  return ans;
+}
+
 function rotate(u: Vector2D, angle: number) {
   return {
     x: u.x * Math.cos(angle) - u.y * Math.sin(angle),
@@ -127,7 +138,7 @@ PerlinNoise.p = [...PerlinNoise.p, ...PerlinNoise.p];
 // NOTE: <<- Main Classes (Collision Grid, Rod, & Bee) ->>
 
 class CollisionGrid {
-  static readonly gridLength = 30;
+  static readonly gridLength = 100;
 
   static readonly dirCnt = 9;
   static readonly dx = [0, 0, 1, 1, 1, 0, -1, -1, -1];
@@ -176,7 +187,6 @@ class Rod {
   draw() {
     ctx.lineWidth = 2;
     ctx.strokeStyle = "hsla(0, 0%, 0%, 1)";
-    ctx.setLineDash([3, 5]);
 
     ctx.beginPath();
 
@@ -184,7 +194,6 @@ class Rod {
     ctx.lineTo(this.rightPoint.x, this.rightPoint.y);
 
     ctx.stroke();
-    ctx.setLineDash([]);
   }
 
   resetPoints() {
@@ -199,17 +208,30 @@ class Bee {
 
   pos: Vector2D;
   vel: Vector2D;
+  det: Vector2D;
 
   static readonly nodeRadius = 5;
   static readonly beeRadius = 15;
+  static readonly beeLegs = 4;
 
-  aerialState: "hover" | "attach" = "hover";
+  static readonly detachChance = 0.0005;
+  static readonly flyTowardsQueenChance = 0.1;
+
+  static readonly queenChance = 0.01;
+  static readonly grav = 0.06;
+  static readonly k = 0.02;
+
+  aerialState: "hover" | "attached" = "hover";
 
   xTime: number;
   yTime: number;
 
   isReverseNoise = false;
   collisionHeat = 0;
+  cooldown = 0;
+
+  attachSet = new Array<number | Vector2D>();
+  supportSet = new Array<number | Vector2D>();
 
   readonly xtimeStep = clamp(Math.random(), 0.1, 0.5);
   readonly ytimeStep = clamp(Math.random(), 0.1, 0.5);
@@ -241,29 +263,29 @@ class Bee {
     }
   }
 
-  constructor(id: number, x: number, y: number) {
+  constructor(id: number, x: number, y: number, vx: number, vy: number) {
     this.id = id;
 
     this.pos = { x, y };
-
-    this.vel = { x: 1, y: -1 };
+    this.vel = { x: vx, y: vy };
+    this.det = { x: 0, y: 0 };
 
     this.xTime = 200 * Math.random();
     this.yTime = 200 * Math.random();
   }
 
   isTouchingBoard(): boolean {
-    return this.pos.y === rod.rodBound + Bee.beeRadius;
+    return this.pos.y <= rod.rodBound + Bee.beeRadius;
   }
 
   isTouchingWall(): boolean {
-    if (this.pos.y === canvasHeight - Bee.beeRadius) return true;
-    if (this.pos.x === Bee.beeRadius) return true;
-    if (this.pos.x === canvasWidth - Bee.beeRadius) return true;
+    if (this.pos.y >= canvasHeight - Bee.beeRadius) return true;
+    if (this.pos.x <= Bee.beeRadius) return true;
+    if (this.pos.x >= canvasWidth - Bee.beeRadius) return true;
     return false;
   }
 
-  isTouchingBee(): null | number {
+  isTouchingBee(): null | Array<number> {
     const xc = CollisionGrid.compress(this.pos).x;
     const yc = CollisionGrid.compress(this.pos).y;
 
@@ -284,47 +306,235 @@ class Bee {
       }
     }
 
+    const ans = new Array<number>();
+
     for (const id of ids) {
       if (euclidDist(this.pos, bees.get(id)!.pos) <= 2 * Bee.beeRadius) {
-        return id;
+        ans.push(id);
       }
     }
 
-    return null;
+    return ans.length === 0 ? null : ans;
   }
 
-  draw() {
-    ctx.lineWidth = 0.5;
-    ctx.strokeStyle = "hsla(0, 0%, 0%, 0.6)";
-
-    ctx.fillStyle = `hsla(${50 - this.collisionHeat}, 90%, 60%, 0.6)`;
+  drawNode() {
+    if (this.attachSet.length === 0) {
+      if (this.cooldown) {
+        ctx.fillStyle = `hsla(${85 + this.cooldown}, 60%, 60%, 1)`;
+      } else {
+        ctx.fillStyle = `hsla(${50 - this.collisionHeat}, 60%, 60%, 1)`;
+      }
+    } else {
+      ctx.fillStyle = `hsla(85, 60%, 60%, 1)`;
+    }
 
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, Bee.nodeRadius, 0, 2 * Math.PI);
-    ctx.stroke();
     ctx.fill();
+  }
+
+  drawEdge() {
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "hsla(0, 0%, 0%, 0.6)";
 
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, Bee.beeRadius, 0, 2 * Math.PI);
     ctx.stroke();
+
+    for (const i of this.attachSet) {
+      ctx.beginPath();
+      ctx.moveTo(this.pos.x, this.pos.y);
+      if ((i as Vector2D).x !== undefined) {
+        ctx.lineTo((i as Vector2D).x, (i as Vector2D).y);
+      } else {
+        ctx.lineTo(bees.get(i as number)!.pos.x, bees.get(i as number)!.pos.y);
+      }
+      ctx.stroke();
+    }
   }
 
-  update() {
+  isAttachedToBoard() {
+    for (const i of this.attachSet) {
+      if ((i as Vector2D).x !== undefined) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  resolveHoverVelocity() {
     const xVelOld = this.vel.x;
     const yVelOld = this.vel.y;
 
     if (this.isTouchingWall()) {
       this.vel = { x: -xVelOld, y: -yVelOld };
       this.isReverseNoise = !this.isReverseNoise;
-    } else if (this.isTouchingBee()) {
-      Bee.resolveBeeCollision(this.id, this.isTouchingBee()!);
-    } else if (this.isTouchingBoard()) {
-      this.vel = { x: -xVelOld, y: -yVelOld };
-      this.isReverseNoise = !this.isReverseNoise;
+    } else if (this.isTouchingBoard() && this.cooldown === 0) {
+      const v = { x: this.pos.x, y: rod.rodBound };
+      this.det = { x: -xVelOld, y: -yVelOld };
+      this.attachSet.push(v as Vector2D);
+      this.vel = { x: 0, y: 0 };
+    } else if (this.isTouchingBee() !== null && this.cooldown === 0) {
+      const j = this.isTouchingBee()![0];
+      if (bees.get(j)!.attachSet.length === 0) {
+        Bee.resolveBeeCollision(this.id, j);
+      } else {
+        for (const j of this.isTouchingBee()!) {
+          this.det = { x: -xVelOld, y: -yVelOld };
+          this.attachSet.push(j);
+          bees.get(j)!.supportSet.push(this.id);
+          this.vel = { x: 0, y: 0 };
+          return;
+        }
+      }
     } else {
       const m = this.isReverseNoise ? -0.05 : 0.05;
+      const d = unitDiff(queenPos, this.pos);
+      const flyTowardsQueen = booleanChance(Bee.flyTowardsQueenChance);
       this.vel.x += m * PerlinNoise.getFBM(this.xTime);
       this.vel.y += m * PerlinNoise.getFBM(this.yTime);
+      if (flyTowardsQueen) {
+        this.vel.x += d.x / 3;
+        this.vel.y += d.y / 6;
+      }
+    }
+  }
+
+  resolveAttachedVelocity() {
+    const a: Vector2D = { x: 0, y: -Bee.grav };
+
+    if (this.supportSet.length === 0) {
+      const toDetach = booleanChance(Bee.detachChance);
+
+      if (toDetach) {
+        for (const i of this.attachSet) {
+          if ((i as Vector2D).x === undefined) {
+            bees.get(i as number)!.supportSet = bees
+              .get(i as number)!
+              .supportSet.filter((u) => u != this.id);
+          }
+        }
+        while (this.attachSet.length) {
+          this.attachSet.pop();
+        }
+        this.vel = this.det;
+        this.det = { x: 0, y: 0 };
+        this.cooldown = 30;
+        return;
+      }
+    }
+
+    if (this.attachSet.length >= 2) {
+      const newAttachSet = new Array<number | Vector2D>();
+
+      for (const i of this.attachSet) {
+        if ((i as Vector2D).x === undefined) {
+          const d = euclidDist(this.pos, bees.get(i as number)!.pos);
+          if (
+            d <= 2 * Bee.beeRadius + 1.0 &&
+            this.pos.y > bees.get(i as number)!.pos.y
+          ) {
+            newAttachSet.push(i as number);
+          } else {
+            bees.get(i as number)!.supportSet = bees
+              .get(i as number)!
+              .supportSet.filter((u) => u != this.id);
+          }
+        } else {
+          const d = euclidDist(this.pos, i as Vector2D);
+          if (d <= 2 * Bee.beeRadius + 1.0) {
+            newAttachSet.push(i as Vector2D);
+          }
+        }
+      }
+
+      this.attachSet = newAttachSet;
+    }
+
+    let otherBees = this.isTouchingBee();
+
+    if (otherBees !== null) {
+      for (const i of otherBees) {
+        if (
+          this.attachSet.length < Bee.beeLegs &&
+          this.pos.y > bees.get(i)!.pos.y &&
+          bees.get(i)!.aerialState === "attached" &&
+          !this.attachSet.includes(i) &&
+          !this.supportSet.includes(i)
+        ) {
+          this.attachSet.push(i);
+          bees.get(i)!.supportSet.push(this.id);
+        }
+      }
+    }
+
+    if (!this.isAttachedToBoard() && this.isTouchingBoard()) {
+      const v = { x: this.pos.x, y: rod.rodBound };
+      this.attachSet.push(v as Vector2D);
+    }
+
+    // TODO: <<- fix convergence to queen ->>
+    // const d = unitDiff(queenPos, this.pos);
+    //
+    // a.x += d.x / 100;
+    // a.y += d.y / 100;
+
+    for (const i of this.supportSet) {
+      const d = unitDiff(this.pos, bees.get(i as number)!.pos);
+      let m = 2 * Bee.beeRadius;
+      m -= euclidDist(bees.get(i as number)!.pos, this.pos);
+      m = clamp(m, 0, 2 * Bee.beeRadius);
+      a.x += Bee.k * m * d.x;
+      a.y += Bee.k * m * d.y;
+    }
+
+    for (const i of this.attachSet) {
+      if ((i as Vector2D).x === undefined) {
+        const d = unitDiff(this.pos, bees.get(i as number)!.pos);
+        let m = 2 * Bee.beeRadius;
+        m -= euclidDist(bees.get(i as number)!.pos, this.pos);
+        m = clamp(m, 0, 2 * Bee.beeRadius);
+        a.x += Bee.k * m * d.x;
+        a.y += Bee.k * m * d.y;
+      } else {
+        const v = i as Vector2D;
+        const d = unitDiff(this.pos, v);
+        let m = Bee.beeRadius;
+        m -= euclidDist(v, this.pos);
+        m = clamp(m, 0, 2 * Bee.beeRadius);
+        a.x += Bee.k * m * d.x;
+        a.y += Bee.k * m * d.y;
+      }
+    }
+
+    a.x = clamp(a.x, -1, 1);
+    a.y = clamp(a.y, -1, 1);
+
+    if (!this.isAttachedToBoard()) {
+      this.vel.x += a.x;
+    } else {
+      // TODO: <<- fix convergence to queen position ->>
+      // const d = unitDiff(queenPos, this.pos);
+      // const toMoveTowardsQueen = booleanChance(Bee.queenChance);
+      //
+      // if (toMoveTowardsQueen) {
+      //   a.x += (d.x / 10);
+      //   a.y += (d.y / 10);
+      //   this.vel.x += a.x;
+      // }
+    }
+
+    this.vel.y += a.y;
+
+    this.vel.x *= 0.8;
+    this.vel.y *= 0.8;
+  }
+
+  update() {
+    if (this.aerialState === "hover") {
+      this.resolveHoverVelocity();
+    } else {
+      this.resolveAttachedVelocity();
     }
 
     this.vel.x = clamp(this.vel.x, -1, 1);
@@ -336,13 +546,13 @@ class Bee {
     this.pos = {
       x: clamp(
         xPosOld + this.vel.x,
-        Bee.beeRadius,
-        canvasWidth - Bee.beeRadius,
+        Bee.nodeRadius,
+        canvasWidth - Bee.nodeRadius,
       ),
       y: clamp(
         yPosOld + this.vel.y,
-        rod.rodBound + Bee.beeRadius,
-        canvasHeight - Bee.beeRadius,
+        rod.rodBound + Bee.nodeRadius,
+        canvasHeight - Bee.nodeRadius,
       ),
     };
 
@@ -350,6 +560,16 @@ class Bee {
     this.yTime += this.ytimeStep;
 
     this.collisionHeat -= this.collisionHeat ? 1 : 0;
+    this.cooldown -= this.cooldown ? 1 : 0;
+    this.aerialState = this.attachSet.length >= 1 ? "attached" : "hover";
+
+    if (this.isAttachedToBoard()) {
+      for (const i of this.attachSet) {
+        if ((i as Vector2D).x !== undefined) {
+          (i as Vector2D).x = this.pos.x;
+        }
+      }
+    }
   }
 }
 
@@ -362,24 +582,28 @@ let canvasHeight = 0;
 
 let simulationStatus: Status = "reset";
 
+let queenPos: Vector2D = { x: 0, y: 0 };
+
 const rod = new Rod();
 const collisionGrid = new CollisionGrid();
 
 let frames = 0;
+
 let curCnt = 0;
 let beeCnt = 200;
+
 let bees = new Map<number, Bee>(); // NOTE: (id (unique): number) -> (bee: Bee)
 
 export function resizeSimulation(width: number, height: number) {
   canvasWidth = width;
   canvasHeight = height;
   rod.resetPoints();
+  queenPos = { x: canvasWidth / 2, y: rod.rodBound + Bee.nodeRadius };
 }
 
 export function setSimulationStatus(newStatus: Status) {
   /* NOTE: <<- Implementation ->>
-   * When the simulation is reset, delete all existing bees and create new
-   * ones randomly.
+   * When the simulation is reset, delete all existing bees.
    */
   simulationStatus = newStatus;
   if (simulationStatus === "reset" && bees.size) {
@@ -396,13 +620,22 @@ export function initSimulation(c: CanvasRenderingContext2D) {
       requestAnimationFrame(animate);
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
       rod.draw();
-      bees.forEach((bee: Bee, _id: number) => bee.draw());
+      bees.forEach((bee: Bee, _id: number) => bee.drawEdge());
+      bees.forEach((bee: Bee, _id: number) => bee.drawNode());
       if (simulationStatus === "start") {
         bees.forEach((bee: Bee, _id: number) => bee.update());
         collisionGrid.build();
         frames++;
-        if (frames % 100 === 0 && curCnt < beeCnt) {
-          bees.set(curCnt, new Bee(curCnt, 30, canvasHeight - 30));
+        if (frames % 50 === 0 && curCnt < beeCnt) {
+          const spawnLeft = booleanChance(0.5);
+          if (spawnLeft) {
+            bees.set(curCnt, new Bee(curCnt, 30, canvasHeight - 30, 1, -0.1));
+          } else {
+            bees.set(
+              curCnt,
+              new Bee(curCnt, canvasWidth - 30, canvasHeight - 30, -1, -0.1),
+            );
+          }
           curCnt++;
         }
       }

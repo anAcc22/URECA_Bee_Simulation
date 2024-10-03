@@ -235,6 +235,9 @@ class Bee {
 
       bees.get(i)!.vel = v1;
       bees.get(j)!.vel = v2;
+
+      bees.get(i)!.collisionHeat = 50;
+      bees.get(j)!.collisionHeat = 50;
     }
   }
 
@@ -398,8 +401,8 @@ export function initSimulation(c: CanvasRenderingContext2D) {
         bees.forEach((bee: Bee, _id: number) => bee.update());
         collisionGrid.build();
         frames++;
-        if (frames%100 === 0 && curCnt < beeCnt) {
-          bees.set(curCnt, new Bee(curCnt, 30, canvasHeight-30));
+        if (frames % 100 === 0 && curCnt < beeCnt) {
+          bees.set(curCnt, new Bee(curCnt, 30, canvasHeight - 30));
           curCnt++;
         }
       }

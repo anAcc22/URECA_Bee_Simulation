@@ -325,7 +325,11 @@ class Bee {
         ctx.fillStyle = `hsla(${50 - this.collisionHeat}, 60%, 60%, 1)`;
       }
     } else {
-      ctx.fillStyle = `hsla(85, 60%, 60%, 1)`;
+      if (this.supportSet.length === 0) {
+        ctx.fillStyle = `hsla(110, 60%, 60%, 1)`;
+      } else {
+        ctx.fillStyle = `hsla(75, 60%, 60%, 1)`;
+      }
     }
 
     ctx.beginPath();

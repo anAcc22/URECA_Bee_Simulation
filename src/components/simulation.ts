@@ -212,9 +212,9 @@ class Bee {
 
   static readonly nodeRadius = 5;
   static readonly beeRadius = 15;
-  static readonly beeLegs = 4;
+  static readonly beeLegs = 3;
 
-  static readonly detachChance = 0.0006;
+  static readonly detachChance = 0.0002;
   static readonly flyTowardsQueenChance = 0.1;
 
   static readonly queenChance = 0.02;
@@ -392,7 +392,7 @@ class Bee {
         }
       }
     } else {
-      const m = this.isReverseNoise ? -0.05 : 0.05;
+      const m = this.isReverseNoise ? -0.01 : 0.01;
       const d = unitDiff(queenPos, this.pos);
       const flyTowardsQueen = booleanChance(Bee.flyTowardsQueenChance);
 
@@ -409,7 +409,7 @@ class Bee {
   resolveAttachedVelocity() {
     const a: Vector2D = { x: 0, y: -Bee.grav };
 
-    if (this.supportSet.length === 0) {
+    if (this.supportSet.length === 0 && !this.isAttachedToBoard()) {
       const toDetach = booleanChance(Bee.detachChance);
 
       if (toDetach) {
@@ -438,8 +438,8 @@ class Bee {
         if ((i as Vector2D).x === undefined) {
           const d = euclidDist(this.pos, bees.get(i as number)!.pos);
           if (
-            d <= 2 * Bee.beeRadius + 1.0 &&
-            this.pos.y > bees.get(i as number)!.pos.y
+            d <= 2 * Bee.beeRadius + 5.0 &&
+            this.pos.y > bees.get(i as number)!.pos.y + 5.0
           ) {
             newAttachSet.push(i as number);
           } else {
@@ -464,7 +464,7 @@ class Bee {
       for (const i of otherBees) {
         if (
           this.attachSet.length < Bee.beeLegs &&
-          this.pos.y > bees.get(i)!.pos.y &&
+          this.pos.y > bees.get(i)!.pos.y + 5.0 &&
           bees.get(i)!.aerialState === "attached" &&
           !this.attachSet.includes(i) &&
           !this.supportSet.includes(i)
@@ -508,22 +508,27 @@ class Bee {
       }
     }
 
-    a.x = clamp(a.x, -1, 1);
-    a.y = clamp(a.y, -1, 1);
+    otherBees = this.isTouchingBee();
 
-    if (!this.isAttachedToBoard()) {
-      const d = unitDiff(queenPos, this.pos);
-      a.x += d.x / 30;
-      a.y += d.y / 30;
-      this.vel.x += a.x;
-    } else {
-      const d = unitDiff(queenPos, this.pos);
-      const toMoveTowardsQueen = booleanChance(Bee.queenChance);
-      if (toMoveTowardsQueen) {
-        this.vel.x += d.x / 30;
+    if (otherBees !== null) {
+      for (const i of otherBees) {
+        if (!this.attachSet.includes(i) && !this.supportSet.includes(i)) {
+          const d = unitDiff(this.pos, bees.get(i)!.pos);
+          a.x += d.x / 4;
+          a.y += d.y / 4;
+        }
       }
     }
 
+    a.x = clamp(a.x, -2, 2);
+    a.y = clamp(a.y, -2, 2);
+
+    if (this.isAttachedToBoard() || this.supportSet.length === 0) {
+      const d = unitDiff(queenPos, this.pos);
+      a.x += d.x / 1.5;
+    }
+
+    this.vel.x += a.x;
     this.vel.y += a.y;
 
     this.vel.x *= 0.75;
@@ -537,8 +542,8 @@ class Bee {
       this.resolveAttachedVelocity();
     }
 
-    this.vel.x = clamp(this.vel.x, -1, 1);
-    this.vel.y = clamp(this.vel.y, -1, 1);
+    this.vel.x = clamp(this.vel.x, -2, 2);
+    this.vel.y = clamp(this.vel.y, -2, 2);
 
     const xPosOld = this.pos.x;
     const yPosOld = this.pos.y;
@@ -628,12 +633,29 @@ export function initSimulation(c: CanvasRenderingContext2D) {
         frames++;
         if (frames % 50 === 0 && curCnt < beeCnt) {
           const spawnLeft = booleanChance(0.5);
+          const spawnOffset = 30 * Math.random() + 30;
+          const velOffset = 0.5 * Math.random();
           if (spawnLeft) {
-            bees.set(curCnt, new Bee(curCnt, 30, canvasHeight - 30, 1, -1));
+            bees.set(
+              curCnt,
+              new Bee(
+                curCnt,
+                spawnOffset,
+                canvasHeight - spawnOffset,
+                velOffset,
+                -2,
+              ),
+            );
           } else {
             bees.set(
               curCnt,
-              new Bee(curCnt, canvasWidth - 30, canvasHeight - 30, -1, -1),
+              new Bee(
+                curCnt,
+                canvasWidth - spawnOffset,
+                canvasHeight - spawnOffset,
+                -velOffset,
+                -2,
+              ),
             );
           }
           curCnt++;

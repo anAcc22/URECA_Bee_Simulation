@@ -1,5 +1,0 @@
-{
-  "plugins": ["prettier-plugin-classnames"],
-  "endingPosition": "absolute-with-indent",
-  "printWidth": 80
-}

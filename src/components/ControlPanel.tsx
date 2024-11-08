@@ -9,9 +9,10 @@ export function ControlPanel({ status, setStatus }: Props) {
   return (
     <>
       <div
-        className="absolute right-10 top-10 z-10 flex w-64 flex-col
-          justify-between gap-5 rounded-lg border-2 border-gray-100 bg-gray-100
-          p-5 font-spacemono shadow-lg hover:border-gray-200"
+        className="absolute sm:right-0 sm:top-0 lg:right-10 lg:top-10 z-10 flex
+          w-64 flex-col justify-between gap-5 rounded-lg border-2
+          border-gray-100 bg-gray-100 p-5 font-spacemono shadow-lg
+          hover:border-gray-200"
       >
         <h1 className="text-lg font-bold">Control Panel</h1>
         <div className="flex justify-between">

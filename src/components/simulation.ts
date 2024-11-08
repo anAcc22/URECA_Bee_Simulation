@@ -595,7 +595,7 @@ const collisionGrid = new CollisionGrid();
 let frames = 0;
 
 let curCnt = 0;
-let beeCnt = 200;
+let beeCnt = 400;
 
 let bees = new Map<number, Bee>(); // NOTE: (id (unique): number) -> (bee: Bee)
 

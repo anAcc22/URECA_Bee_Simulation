@@ -439,7 +439,7 @@ class Bee {
           const d = euclidDist(this.pos, bees.get(i as number)!.pos);
           if (
             d <= 2 * Bee.beeRadius + 5.0 &&
-            this.pos.y > bees.get(i as number)!.pos.y + 5.0
+              this.pos.y > bees.get(i as number)!.pos.y + 5.0
           ) {
             newAttachSet.push(i as number);
           } else {
@@ -464,10 +464,10 @@ class Bee {
       for (const i of otherBees) {
         if (
           this.attachSet.length < Bee.beeLegs &&
-          this.pos.y > bees.get(i)!.pos.y + 5.0 &&
-          bees.get(i)!.aerialState === "attached" &&
-          !this.attachSet.includes(i) &&
-          !this.supportSet.includes(i)
+            this.pos.y > bees.get(i)!.pos.y + 5.0 &&
+            bees.get(i)!.aerialState === "attached" &&
+            !this.attachSet.includes(i) &&
+            !this.supportSet.includes(i)
         ) {
           this.attachSet.push(i);
           bees.get(i)!.supportSet.push(this.id);
@@ -525,7 +525,7 @@ class Bee {
 
     if (this.isAttachedToBoard() || this.supportSet.length === 0) {
       const d = unitDiff(queenPos, this.pos);
-      a.x += d.x / 1.5;
+      a.x += d.x / 4;
     }
 
     this.vel.x += a.x;
@@ -599,6 +599,14 @@ let beeCnt = 200;
 
 let bees = new Map<number, Bee>(); // NOTE: (id (unique): number) -> (bee: Bee)
 
+function drawQueenIndicator() {
+  let t = performance.now();
+  ctx.fillStyle = `hsla(20, 60%, ${Math.abs(Math.sin(t/500))*30+20}%, 1)`;
+  ctx.beginPath();
+  ctx.arc(canvasWidth/2, canvasHeight/3, Bee.nodeRadius, 0, 2 * Math.PI);
+  ctx.fill();
+}
+
 export function resizeSimulation(width: number, height: number) {
   canvasWidth = width;
   canvasHeight = height;
@@ -624,9 +632,14 @@ export function initSimulation(c: CanvasRenderingContext2D) {
     setTimeout(() => {
       requestAnimationFrame(animate);
       ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
       rod.draw();
+
       bees.forEach((bee: Bee, _id: number) => bee.drawEdge());
       bees.forEach((bee: Bee, _id: number) => bee.drawNode());
+
+      drawQueenIndicator();
+
       if (simulationStatus === "start") {
         bees.forEach((bee: Bee, _id: number) => bee.update());
         collisionGrid.build();

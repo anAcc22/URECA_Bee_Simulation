@@ -212,13 +212,13 @@ class Bee {
 
   static readonly nodeRadius = 5;
   static readonly beeRadius = 15;
-  static readonly beeLegs = 3;
+  static readonly beeLegs = 4;
 
   static readonly detachChance = 0.0002;
   static readonly flyTowardsQueenChance = 0.1;
 
   static readonly queenChance = 0.02;
-  static readonly grav = 0.06;
+  static readonly grav = 0.1;
   static readonly k = 0.02;
 
   aerialState: "hover" | "attached" = "hover";
@@ -333,7 +333,7 @@ class Bee {
     }
 
     ctx.beginPath();
-    ctx.arc(this.pos.x, this.pos.y, Bee.nodeRadius, 0, 2 * Math.PI);
+    ctx.arc(this.pos.x, this.pos.y, (4 / 5) * Bee.nodeRadius, 0, 2 * Math.PI);
     ctx.fill();
   }
 
@@ -348,12 +348,18 @@ class Bee {
     for (const i of this.attachSet) {
       ctx.beginPath();
       ctx.moveTo(this.pos.x, this.pos.y);
+      let x: number, y: number;
       if ((i as Vector2D).x !== undefined) {
-        ctx.lineTo((i as Vector2D).x, (i as Vector2D).y);
+        x = (i as Vector2D).x;
+        y = (i as Vector2D).y;
       } else {
-        ctx.lineTo(bees.get(i as number)!.pos.x, bees.get(i as number)!.pos.y);
+        x = bees.get(i as number)!.pos.x;
+        y = bees.get(i as number)!.pos.y;
       }
-      ctx.stroke();
+      if (euclidDist(this.pos, { x, y }) <= 2 * Bee.beeRadius + 1.0) {
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
     }
   }
 
@@ -392,12 +398,12 @@ class Bee {
         }
       }
     } else {
-      const m = this.isReverseNoise ? -0.01 : 0.01;
+      const m = this.isReverseNoise ? -0.005 : 0.005;
       const d = unitDiff(queenPos, this.pos);
       const flyTowardsQueen = booleanChance(Bee.flyTowardsQueenChance);
 
-      this.vel.x += m * PerlinNoise.getFBM(this.xTime);
-      this.vel.y += m * PerlinNoise.getFBM(this.yTime);
+      this.vel.x += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.xTime);
+      this.vel.y += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.yTime);
 
       if (flyTowardsQueen) {
         this.vel.x += d.x / 10;
@@ -438,8 +444,8 @@ class Bee {
         if ((i as Vector2D).x === undefined) {
           const d = euclidDist(this.pos, bees.get(i as number)!.pos);
           if (
-            d <= 2 * Bee.beeRadius + 5.0 &&
-              this.pos.y > bees.get(i as number)!.pos.y + 5.0
+            d <= 2 * Bee.beeRadius + 1.0 &&
+            this.pos.y > bees.get(i as number)!.pos.y + 5.0
           ) {
             newAttachSet.push(i as number);
           } else {
@@ -464,10 +470,10 @@ class Bee {
       for (const i of otherBees) {
         if (
           this.attachSet.length < Bee.beeLegs &&
-            this.pos.y > bees.get(i)!.pos.y + 5.0 &&
-            bees.get(i)!.aerialState === "attached" &&
-            !this.attachSet.includes(i) &&
-            !this.supportSet.includes(i)
+          this.pos.y > bees.get(i)!.pos.y + 5.0 &&
+          bees.get(i)!.aerialState === "attached" &&
+          !this.attachSet.includes(i) &&
+          !this.supportSet.includes(i)
         ) {
           this.attachSet.push(i);
           bees.get(i)!.supportSet.push(this.id);
@@ -485,8 +491,10 @@ class Bee {
       let m = 2 * Bee.beeRadius;
       m -= euclidDist(bees.get(i as number)!.pos, this.pos);
       m = clamp(m, 0, 2 * Bee.beeRadius);
-      a.x += Bee.k * m * d.x;
-      a.y += Bee.k * m * d.y;
+      if (!this.isAttachedToBoard()) {
+        a.x += Bee.k * m * d.x;
+        a.y += Bee.k * m * d.y;
+      }
     }
 
     for (const i of this.attachSet) {
@@ -514,19 +522,47 @@ class Bee {
       for (const i of otherBees) {
         if (!this.attachSet.includes(i) && !this.supportSet.includes(i)) {
           const d = unitDiff(this.pos, bees.get(i)!.pos);
-          a.x += d.x / 4;
-          a.y += d.y / 4;
+          if (this.isAttachedToBoard()) {
+            if (bees.get(i)!.isAttachedToBoard()) {
+              a.x += d.x / 20;
+              a.y += d.y / 20;
+            }
+          } else {
+            a.x += d.x / 10;
+            a.y += d.y / 10;
+          }
         }
+      }
+    }
+
+    if (this.isAttachedToBoard() && this.supportSet.length === 0) {
+      const d = unitDiff(queenPos, this.pos);
+      const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
+      const toAdvance = booleanChance(p);
+      if (toAdvance) {
+        a.x += d.x / Math.abs(d.x) / 6;
+        a.y += d.y / 40;
+      }
+    } else if (!this.isAttachedToBoard() && this.supportSet.length === 0) {
+      const d = unitDiff(queenPos, this.pos);
+      const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
+      const toAdvance = booleanChance(1 - p);
+      if (toAdvance) {
+        a.x += d.x / Math.abs(d.x) / 8;
+        a.y += d.y / 20 + (Math.random() - 0.5) / 40;
+      }
+    } else {
+      const d = unitDiff(queenPos, this.pos);
+      const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
+      const toAdvance = booleanChance(p);
+      if (toAdvance) {
+        a.x += d.x / Math.abs(d.x) / 20;
+        a.y -= d.y / 40;
       }
     }
 
     a.x = clamp(a.x, -2, 2);
     a.y = clamp(a.y, -2, 2);
-
-    if (this.isAttachedToBoard() || this.supportSet.length === 0) {
-      const d = unitDiff(queenPos, this.pos);
-      a.x += d.x / 4;
-    }
 
     this.vel.x += a.x;
     this.vel.y += a.y;
@@ -582,6 +618,8 @@ const FPS = 60;
 
 let ctx: CanvasRenderingContext2D;
 
+let queenCovered = false;
+
 let canvasWidth = 0;
 let canvasHeight = 0;
 
@@ -601,15 +639,16 @@ let bees = new Map<number, Bee>(); // NOTE: (id (unique): number) -> (bee: Bee)
 
 function drawQueenIndicator() {
   let t = performance.now();
-  ctx.fillStyle = `hsla(20, 60%, ${Math.abs(Math.sin(t/500))*30+20}%, 1)`;
+  ctx.fillStyle = `hsla(20, 60%, ${Math.abs(Math.sin(t / 500)) * 30 + 20}%, 1)`;
   ctx.beginPath();
-  ctx.arc(canvasWidth/2, canvasHeight/3, Bee.nodeRadius, 0, 2 * Math.PI);
+  ctx.arc(canvasWidth / 2, canvasHeight / 3, Bee.nodeRadius, 0, 2 * Math.PI);
   ctx.fill();
 }
 
 export function resizeSimulation(width: number, height: number) {
   canvasWidth = width;
   canvasHeight = height;
+  queenCovered = false;
   rod.resetPoints();
   queenPos = { x: canvasWidth / 2, y: canvasHeight };
 }
@@ -648,30 +687,45 @@ export function initSimulation(c: CanvasRenderingContext2D) {
           const spawnLeft = booleanChance(0.5);
           const spawnOffset = 30 * Math.random() + 30;
           const velOffset = 0.5 * Math.random();
+
+          let x: number;
+          let y: number;
+          let dx: number;
+          let dy: number;
+
           if (spawnLeft) {
-            bees.set(
-              curCnt,
-              new Bee(
-                curCnt,
-                spawnOffset,
-                canvasHeight - spawnOffset,
-                velOffset,
-                -2,
-              ),
-            );
+            x = spawnOffset;
+            y = canvasHeight - spawnOffset;
           } else {
-            bees.set(
-              curCnt,
-              new Bee(
-                curCnt,
-                canvasWidth - spawnOffset,
-                canvasHeight - spawnOffset,
-                -velOffset,
-                -2,
-              ),
-            );
+            x = canvasWidth - spawnOffset;
+            y = canvasHeight - spawnOffset;
           }
+
+          const dq = unitDiff(
+            {
+              x: canvasWidth / 2,
+              y: canvasHeight / 3,
+            },
+            { x, y },
+          );
+
+          if (!queenCovered) {
+            dx = 5 * dq.x;
+            dy = 2.5 * dq.y;
+          } else {
+            if (spawnLeft) {
+              dx = velOffset;
+              dy = -2;
+            } else {
+              dx = -velOffset;
+              dy = -2;
+            }
+          }
+
+          bees.set(curCnt, new Bee(curCnt, x, y, dx, dy));
+
           curCnt++;
+          if (curCnt == 30) queenCovered = true;
         }
       }
     }, 1000 / FPS);

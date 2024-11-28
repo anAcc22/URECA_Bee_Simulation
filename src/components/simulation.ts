@@ -212,13 +212,13 @@ class Bee {
 
   static readonly nodeRadius = 5;
   static readonly beeRadius = 15;
-  static readonly beeLegs = 4;
+  static readonly beeLegs = 2;
 
-  static readonly detachChance = 0.0002;
+  static readonly detachChance = 0.00005;
   static readonly flyTowardsQueenChance = 0.1;
 
   static readonly queenChance = 0.02;
-  static readonly grav = 0.1;
+  static readonly grav = 0.08;
   static readonly k = 0.02;
 
   aerialState: "hover" | "attached" = "hover";
@@ -356,10 +356,8 @@ class Bee {
         x = bees.get(i as number)!.pos.x;
         y = bees.get(i as number)!.pos.y;
       }
-      if (euclidDist(this.pos, { x, y }) <= 2 * Bee.beeRadius + 1.0) {
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
+      ctx.lineTo(x, y);
+      ctx.stroke();
     }
   }
 
@@ -430,38 +428,27 @@ class Bee {
           this.attachSet.pop();
         }
         this.vel = this.det;
-        this.vel.y = 1;
+        this.vel.y = 2;
         this.det = { x: 0, y: 0 };
         this.cooldown = 15;
         return;
       }
     }
 
-    if (this.attachSet.length >= 2) {
-      const newAttachSet = new Array<number | Vector2D>();
+    const newAttachSet = new Array<number | Vector2D>();
+    const candidates = new Array<[number | Vector2D, number]>();
 
-      for (const i of this.attachSet) {
-        if ((i as Vector2D).x === undefined) {
-          const d = euclidDist(this.pos, bees.get(i as number)!.pos);
-          if (
-            d <= 2 * Bee.beeRadius + 1.0 &&
-            this.pos.y > bees.get(i as number)!.pos.y + 5.0
-          ) {
-            newAttachSet.push(i as number);
-          } else {
-            bees.get(i as number)!.supportSet = bees
-              .get(i as number)!
-              .supportSet.filter((u) => u != this.id);
-          }
-        } else {
-          const d = euclidDist(this.pos, i as Vector2D);
-          if (d <= 2 * Bee.beeRadius + 1.0) {
-            newAttachSet.push(i as Vector2D);
-          }
+    for (const i of this.attachSet) {
+      if ((i as Vector2D).x !== undefined) {
+        if (this.isTouchingBoard()) {
+          const v = { x: this.pos.x, y: rod.rodBound };
+          candidates.push([v, 0]);
         }
+      } else {
+        bees.get(i as number)!.supportSet = bees
+          .get(i as number)!
+          .supportSet.filter((u) => u != this.id);
       }
-
-      this.attachSet = newAttachSet;
     }
 
     let otherBees = this.isTouchingBee();
@@ -469,22 +456,40 @@ class Bee {
     if (otherBees !== null) {
       for (const i of otherBees) {
         if (
-          this.attachSet.length < Bee.beeLegs &&
-          this.pos.y > bees.get(i)!.pos.y + 5.0 &&
-          bees.get(i)!.aerialState === "attached" &&
-          !this.attachSet.includes(i) &&
-          !this.supportSet.includes(i)
+          this.pos.y > bees.get(i)!.pos.y + 1.0 &&
+          euclidDist(this.pos, bees.get(i)!.pos) <= 2 * Bee.beeRadius + 5.0 &&
+          bees.get(i)!.aerialState === "attached"
         ) {
-          this.attachSet.push(i);
-          bees.get(i)!.supportSet.push(this.id);
+          candidates.push([i, euclidDist(this.pos, bees.get(i)!.pos)]);
         }
       }
     }
 
-    if (!this.isAttachedToBoard() && this.isTouchingBoard()) {
-      const v = { x: this.pos.x, y: rod.rodBound };
-      this.attachSet.push(v as Vector2D);
+    candidates.sort((x, y) => {
+      if (x[1] <= Bee.beeRadius / 2 || (x[0] as Vector2D).x !== undefined)
+        return -1;
+      if (y[1] <= Bee.beeRadius / 2 || (y[0] as Vector2D).x !== undefined)
+        return 1;
+      return x[1]-y[1];
+    });
+
+    let goingToAttachToBoard = false;
+
+    for (let i = 0; i < Math.min(candidates.length, Bee.beeLegs); i++) {
+      if ((candidates[i][0] as Vector2D).x === undefined) {
+        if (goingToAttachToBoard) {
+          if (this.pos.y <= bees.get(candidates[i][0] as number)!.pos.y + 2.0) {
+            break;
+          }
+        }
+        bees.get(candidates[i][0] as number)!.supportSet.push(this.id);
+      } else {
+        goingToAttachToBoard = true;
+      }
+      newAttachSet.push(candidates[i][0]);
     }
+
+    this.attachSet = newAttachSet;
 
     for (const i of this.supportSet) {
       const d = unitDiff(this.pos, bees.get(i as number)!.pos);
@@ -516,16 +521,14 @@ class Bee {
       }
     }
 
-    otherBees = this.isTouchingBee();
-
     if (otherBees !== null) {
       for (const i of otherBees) {
         if (!this.attachSet.includes(i) && !this.supportSet.includes(i)) {
           const d = unitDiff(this.pos, bees.get(i)!.pos);
           if (this.isAttachedToBoard()) {
             if (bees.get(i)!.isAttachedToBoard()) {
-              a.x += d.x / 20;
-              a.y += d.y / 20;
+              a.x += d.x / 15;
+              a.y += d.y / 15;
             }
           } else {
             a.x += d.x / 10;
@@ -540,8 +543,8 @@ class Bee {
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
       const toAdvance = booleanChance(p);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / 6;
-        a.y += d.y / 40;
+        a.x += d.x / Math.abs(d.x) / 4;
+        a.y += d.y / 30;
       }
     } else if (!this.isAttachedToBoard() && this.supportSet.length === 0) {
       const d = unitDiff(queenPos, this.pos);
@@ -633,7 +636,7 @@ const collisionGrid = new CollisionGrid();
 let frames = 0;
 
 let curCnt = 0;
-let beeCnt = 200;
+let beeCnt = 500;
 
 let bees = new Map<number, Bee>(); // NOTE: (id (unique): number) -> (bee: Bee)
 

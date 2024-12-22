@@ -1,18 +1,25 @@
 import { Status } from "../types";
-import { useState } from "react";
 
 interface Props {
   status: Status;
   setStatus: React.Dispatch<React.SetStateAction<Status>>;
   beeCnt: number;
+  showBodyOnly: boolean;
+  setShowBodyOnly: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export function ControlPanel({ status, setStatus, beeCnt }: Props) {
+export function ControlPanel({
+  status,
+  setStatus,
+  beeCnt,
+  showBodyOnly,
+  setShowBodyOnly,
+}: Props) {
   return (
     <>
       <div
         className="absolute sm:right-0 sm:top-0 lg:right-10 lg:top-10 z-10 flex
-          w-64 flex-col justify-between gap-5 rounded-lg border-2
+          w-72 flex-col justify-between gap-2 rounded-lg border-2
           border-gray-100 bg-gray-100 p-5 font-spacemono shadow-lg
           hover:border-gray-200"
       >
@@ -56,9 +63,28 @@ export function ControlPanel({ status, setStatus, beeCnt }: Props) {
           </button>
         </div>
 
-        <div className="flex justify-between font-spacemono">
-          <div>Bee Count</div>
+        <div className="flex justify-between">
+          <div className="font-semibold">Bee Count</div>
           <div>{beeCnt}</div>
+        </div>
+
+        <div className="flex justify-between">
+          <div className="font-semibold">Show Body Only</div>
+          <div className="flex gap-1">
+            <button
+              className={showBodyOnly ? "" : "font-semibold"}
+              onClick={() => setShowBodyOnly(false)}
+            >
+              No
+            </button>
+            |
+            <button
+              className={showBodyOnly ? "font-semibold" : ""}
+              onClick={() => setShowBodyOnly(true)}
+            >
+              Yes
+            </button>
+          </div>
         </div>
       </div>
     </>

@@ -6,16 +6,18 @@ import { useState } from "react";
 export default function App() {
   const [status, setStatus] = useState<Status>("reset");
   const [beeCnt, setBeeCnt] = useState<number>(0);
+  const [showBodyOnly, setShowBodyOnly] = useState<boolean>(false);
 
   return (
     <>
-      <ControlPanel status={status}
+      <ControlPanel
+        status={status}
         setStatus={setStatus}
         beeCnt={beeCnt}
+        showBodyOnly={showBodyOnly}
+        setShowBodyOnly={setShowBodyOnly}
       ></ControlPanel>
-      <Simulation status={status}
-        setBeeCnt={setBeeCnt}
-      ></Simulation>
+      <Simulation status={status} setBeeCnt={setBeeCnt} showBodyOnly={showBodyOnly}></Simulation>
     </>
   );
 }

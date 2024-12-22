@@ -218,7 +218,7 @@ class Bee {
   static readonly flyTowardsQueenChance = 0.1;
 
   static readonly queenChance = 0.02;
-  static readonly grav = 0.08;
+  static readonly grav = 0.04;
   static readonly k = 0.02;
 
   aerialState: "hover" | "attached" = "hover";
@@ -430,7 +430,7 @@ class Bee {
           this.attachSet.pop();
         }
         this.vel = this.det;
-        this.vel.y = 2;
+        this.vel.y = 2.0;
         this.det = { x: 0, y: 0 };
         this.cooldown = 15;
         return;
@@ -472,7 +472,7 @@ class Bee {
         return -1;
       if (y[1] <= Bee.beeRadius / 2 || (y[0] as Vector2D).x !== undefined)
         return 1;
-      return x[1]-y[1];
+      return x[1] - y[1];
     });
 
     let goingToAttachToBoard = false;
@@ -529,8 +529,8 @@ class Bee {
           const d = unitDiff(this.pos, bees.get(i)!.pos);
           if (this.isAttachedToBoard()) {
             if (bees.get(i)!.isAttachedToBoard()) {
-              a.x += d.x / 15;
-              a.y += d.y / 15;
+              a.x += d.x / 10;
+              a.y += d.y / 10;
             }
           } else {
             a.x += d.x / 10;
@@ -545,7 +545,7 @@ class Bee {
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
       const toAdvance = booleanChance(p);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / 4;
+        a.x += d.x / Math.abs(d.x) / 6;
         a.y += d.y / 30;
       }
     } else if (!this.isAttachedToBoard() && this.supportSet.length === 0) {
@@ -561,7 +561,7 @@ class Bee {
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
       const toAdvance = booleanChance(p);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / 20;
+        a.x += d.x / Math.abs(d.x) / 30;
         a.y -= d.y / 40;
       }
     }
@@ -624,6 +624,7 @@ const FPS = 60;
 let ctx: CanvasRenderingContext2D;
 
 let queenCovered = false;
+let showBodyOnly = false;
 
 let canvasWidth = 0;
 let canvasHeight = 0;
@@ -658,6 +659,10 @@ export function resizeSimulation(width: number, height: number) {
   queenPos = { x: canvasWidth / 2, y: canvasHeight };
 }
 
+export function setShowBodyOnly(newShowBodyOnly: boolean) {
+  showBodyOnly = newShowBodyOnly;
+}
+
 export function setSimulationStatus(newStatus: Status) {
   /* NOTE: <<- Implementation ->>
    * When the simulation is reset, delete all existing bees.
@@ -673,7 +678,9 @@ export function setSimulationStatus(newStatus: Status) {
 
 let setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
 
-export function updateSetBeeCnt(_: React.Dispatch<React.SetStateAction<number>>) {
+export function updateSetBeeCnt(
+  _: React.Dispatch<React.SetStateAction<number>>,
+) {
   setBeeCnt = _;
 }
 
@@ -687,7 +694,9 @@ export function initSimulation(c: CanvasRenderingContext2D) {
 
       rod.draw();
 
-      bees.forEach((bee: Bee, _id: number) => bee.drawEdge());
+      if (!showBodyOnly) {
+        bees.forEach((bee: Bee, _id: number) => bee.drawEdge());
+      }
       bees.forEach((bee: Bee, _id: number) => bee.drawNode());
 
       drawQueenIndicator();

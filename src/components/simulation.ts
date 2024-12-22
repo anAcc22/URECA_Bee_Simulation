@@ -341,6 +341,8 @@ class Bee {
     ctx.lineWidth = 2;
     ctx.strokeStyle = "hsla(0, 0%, 0%, 0.6)";
 
+    ctx.fillStyle = "";
+
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, Bee.beeRadius, 0, 2 * Math.PI);
     ctx.stroke();

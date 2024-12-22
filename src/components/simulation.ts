@@ -666,7 +666,15 @@ export function setSimulationStatus(newStatus: Status) {
   if (simulationStatus === "reset" && bees.size) {
     bees.clear();
     frames = 0;
+    beeCnt = 0;
+    setBeeCnt(beeCnt);
   }
+}
+
+let setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
+
+export function updateSetBeeCnt(_: React.Dispatch<React.SetStateAction<number>>) {
+  setBeeCnt = _;
 }
 
 export function initSimulation(c: CanvasRenderingContext2D) {
@@ -730,6 +738,7 @@ export function initSimulation(c: CanvasRenderingContext2D) {
           bees.set(curCnt, new Bee(curCnt, x, y, dx, dy));
 
           curCnt++;
+          setBeeCnt(curCnt);
           if (curCnt == 30) queenCovered = true;
         }
       }

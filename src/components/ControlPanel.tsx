@@ -1,11 +1,13 @@
 import { Status } from "../types";
+import { useState } from "react";
 
 interface Props {
   status: Status;
   setStatus: React.Dispatch<React.SetStateAction<Status>>;
+  beeCnt: number;
 }
 
-export function ControlPanel({ status, setStatus }: Props) {
+export function ControlPanel({ status, setStatus, beeCnt }: Props) {
   return (
     <>
       <div
@@ -52,6 +54,11 @@ export function ControlPanel({ status, setStatus }: Props) {
           >
             Reset
           </button>
+        </div>
+
+        <div className="flex justify-between font-spacemono">
+          <div>Bee Count</div>
+          <div>{beeCnt}</div>
         </div>
       </div>
     </>

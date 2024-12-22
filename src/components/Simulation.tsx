@@ -6,12 +6,14 @@ import { Status } from "../types";
 import { resizeSimulation } from "./simulation";
 import { setSimulationStatus } from "./simulation";
 import { initSimulation } from "./simulation";
+import { updateSetBeeCnt } from "./simulation";
 
 interface Props {
   status: Status;
+  setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
 }
 
-export function Simulation({ status }: Props) {
+export function Simulation({ status, setBeeCnt }: Props) {
   let ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -44,6 +46,7 @@ export function Simulation({ status }: Props) {
 
     resize();
     initSimulation(ctx);
+    updateSetBeeCnt(setBeeCnt);
 
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);

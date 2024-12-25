@@ -545,13 +545,21 @@ class Bee {
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
       const toAdvance = booleanChance((p + alpha) / 2.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / (12 * (1 - alpha) + 6);
+        a.x += d.x / Math.abs(d.x) / (8 * (1 - alpha) + 6);
+        a.y += d.y / 30;
+      }
+    } else if (this.isAttachedToBoard()) {
+      const d = unitDiff(queenPos, this.pos);
+      const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
+      const toAdvance = booleanChance((p + alpha) / 2.0);
+      if (toAdvance) {
+        a.x += d.x / Math.abs(d.x) / (8 * (1 - alpha) + 9);
         a.y += d.y / 30;
       }
     } else if (!this.isAttachedToBoard() && this.supportSet.length === 0) {
       const d = unitDiff(queenPos, this.pos);
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
-      const toAdvance = booleanChance((1 - p + beta) / 2.0);
+      const toAdvance = booleanChance((1 - p + beta) / 3.0);
       if (toAdvance) {
         a.x += d.x / Math.abs(d.x) / (6 * (1 - beta) + 6);
         a.y += d.y / 20 + (Math.random() - 0.5) / (30 * (1 - beta) + 30);
@@ -559,7 +567,7 @@ class Bee {
     } else {
       const d = unitDiff(queenPos, this.pos);
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
-      const toAdvance = booleanChance((p + beta) / 2.0);
+      const toAdvance = booleanChance((p + beta) / 4.0);
       if (toAdvance) {
         a.x += d.x / Math.abs(d.x) / (3 * (1 - beta) + 3);
         a.y -= d.y / 20 + (Math.random() - 0.5) / (15 * (1 - beta) + 15);
@@ -674,8 +682,8 @@ export function setSimulationStatus(newStatus: Status) {
   if (simulationStatus === "reset" && bees.size) {
     bees.clear();
     frames = 0;
-    beeCnt = 0;
-    setBeeCnt(beeCnt);
+    curCnt = 0;
+    setBeeCnt(curCnt);
   }
 }
 

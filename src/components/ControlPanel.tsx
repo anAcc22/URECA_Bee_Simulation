@@ -84,11 +84,11 @@ export function ControlPanel({
             self-center rounded-full cursor-ew-resize
             [&::-webkit-slider-thumb]:appearance-none
             [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
-            [&::-webkit-slider-thumb]:border-none
-            [&::-webkit-slider-thumb]:bg-gray-500
+            [&::-webkit-slider-thumb]:border-gray-500
+            [&::-webkit-slider-thumb]:bg-none
             [&::-webkit-slider-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-gray-500 [&::-moz-range-thumb]:w-2
-            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-none
+            [&::-moz-range-thumb]:bg-none [&::-moz-range-thumb]:w-2
+            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-gray-500
             [&::-moz-range-thumb]:rounded-full"
           onChange={(e) => {
             setAlpha(Number.parseFloat(e.target.value));
@@ -111,11 +111,11 @@ export function ControlPanel({
             self-center rounded-full cursor-ew-resize
             [&::-webkit-slider-thumb]:appearance-none
             [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
-            [&::-webkit-slider-thumb]:border-none
-            [&::-webkit-slider-thumb]:bg-gray-500
+            [&::-webkit-slider-thumb]:border-gray-500
+            [&::-webkit-slider-thumb]:bg-none
             [&::-webkit-slider-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-gray-500 [&::-moz-range-thumb]:w-2
-            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-none
+            [&::-moz-range-thumb]:bg-none [&::-moz-range-thumb]:w-2
+            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-gray-500
             [&::-moz-range-thumb]:rounded-full"
           onChange={(e) => {
             setBeta(Number.parseFloat(e.target.value));

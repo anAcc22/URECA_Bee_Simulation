@@ -320,15 +320,15 @@ class Bee {
   drawNode() {
     if (this.attachSet.length === 0) {
       if (this.cooldown) {
-        ctx.fillStyle = `hsla(${85 + this.cooldown}, 60%, 60%, 1)`;
+        ctx.fillStyle = `hsla(${95 + this.cooldown}, 40%, 60%, 1)`;
       } else {
-        ctx.fillStyle = `hsla(${50 - this.collisionHeat}, 60%, 60%, 1)`;
+        ctx.fillStyle = `hsla(${60 - this.collisionHeat}, 40%, 60%, 1)`;
       }
     } else {
       if (this.supportSet.length === 0) {
-        ctx.fillStyle = `hsla(110, 60%, 60%, 1)`;
+        ctx.fillStyle = `hsla(35, 60%, 55%, 1)`;
       } else {
-        ctx.fillStyle = `hsla(75, 60%, 60%, 1)`;
+        ctx.fillStyle = `hsla(50, 60%, 55%, 1)`;
       }
     }
 
@@ -339,13 +339,15 @@ class Bee {
 
   drawEdge() {
     ctx.lineWidth = 2;
-    ctx.strokeStyle = "hsla(0, 0%, 0%, 0.6)";
+    ctx.strokeStyle = "hsla(0, 0%, 0%, 0.2)";
 
     ctx.fillStyle = "";
 
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, Bee.beeRadius, 0, 2 * Math.PI);
     ctx.stroke();
+
+    ctx.strokeStyle = "hsla(0, 0%, 0%, 0.6)";
 
     for (const i of this.attachSet) {
       ctx.beginPath();
@@ -529,12 +531,12 @@ class Bee {
           const d = unitDiff(this.pos, bees.get(i)!.pos);
           if (this.isAttachedToBoard()) {
             if (bees.get(i)!.isAttachedToBoard()) {
-              a.x += d.x / 4.5;
-              a.y += d.y / 4.5;
+              a.x += d.x / 6.0;
+              a.y += d.y / 6.0;
             }
           } else {
-            a.x += d.x / 10;
-            a.y += d.y / 10;
+            a.x += d.x / 5.0;
+            a.y += d.y / 5.0;
           }
         }
       }
@@ -545,7 +547,7 @@ class Bee {
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
       const toAdvance = booleanChance((p + alpha) / 2.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / (6 * (1 - alpha) + 6);
+        a.x += d.x / Math.abs(d.x) / (4 * (1 - alpha) + 6);
         a.y += d.y / 30;
       }
     } else if (this.isAttachedToBoard()) {
@@ -553,7 +555,7 @@ class Bee {
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
       const toAdvance = booleanChance((p + alpha) / 2.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / (6 * (1 - alpha) + 9);
+        a.x += d.x / Math.abs(d.x) / (4 * (1 - alpha) + 9);
         a.y += d.y / 30;
       }
     } else if (!this.isAttachedToBoard() && this.supportSet.length === 0) {

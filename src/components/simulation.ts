@@ -215,7 +215,7 @@ class Bee {
   static readonly beeLegs = 2;
 
   static readonly detachChance = 0.00005;
-  static readonly flyTowardsQueenChance = 0.1;
+  static readonly flyTowardsQueenChance = 0.5;
 
   static readonly queenChance = 0.02;
   static readonly grav = 0.04;
@@ -459,7 +459,7 @@ class Bee {
       for (const i of otherBees) {
         if (
           this.pos.y > bees.get(i)!.pos.y + 1.0 &&
-          euclidDist(this.pos, bees.get(i)!.pos) <= 2 * Bee.beeRadius + 5.0 &&
+          euclidDist(this.pos, bees.get(i)!.pos) <= 2 * Bee.beeRadius + 7.5 &&
           bees.get(i)!.aerialState === "attached"
         ) {
           candidates.push([i, euclidDist(this.pos, bees.get(i)!.pos)]);
@@ -529,8 +529,8 @@ class Bee {
           const d = unitDiff(this.pos, bees.get(i)!.pos);
           if (this.isAttachedToBoard()) {
             if (bees.get(i)!.isAttachedToBoard()) {
-              a.x += d.x / 10;
-              a.y += d.y / 10;
+              a.x += d.x / 4.5;
+              a.y += d.y / 4.5;
             }
           } else {
             a.x += d.x / 10;
@@ -543,26 +543,26 @@ class Bee {
     if (this.isAttachedToBoard() && this.supportSet.length === 0) {
       const d = unitDiff(queenPos, this.pos);
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
-      const toAdvance = booleanChance(p);
+      const toAdvance = booleanChance((p + alpha) / 2.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / 6;
+        a.x += d.x / Math.abs(d.x) / (12 * (1 - alpha) + 6);
         a.y += d.y / 30;
       }
     } else if (!this.isAttachedToBoard() && this.supportSet.length === 0) {
       const d = unitDiff(queenPos, this.pos);
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
-      const toAdvance = booleanChance(1 - p);
+      const toAdvance = booleanChance((1 - p + beta) / 2.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / 8;
-        a.y += d.y / 20 + (Math.random() - 0.5) / 40;
+        a.x += d.x / Math.abs(d.x) / (6 * (1 - beta) + 6);
+        a.y += d.y / 20 + (Math.random() - 0.5) / (30 * (1 - beta) + 30);
       }
     } else {
       const d = unitDiff(queenPos, this.pos);
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
-      const toAdvance = booleanChance(p);
+      const toAdvance = booleanChance((p + beta) / 2.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / 30;
-        a.y -= d.y / 40;
+        a.x += d.x / Math.abs(d.x) / (3 * (1 - beta) + 3);
+        a.y -= d.y / 20 + (Math.random() - 0.5) / (15 * (1 - beta) + 15);
       }
     }
 
@@ -629,6 +629,9 @@ let showBodyOnly = false;
 let canvasWidth = 0;
 let canvasHeight = 0;
 
+let alpha = 0.0;
+let beta = 0.0;
+
 let simulationStatus: Status = "reset";
 
 let queenPos: Vector2D = { x: 0, y: 0 };
@@ -674,6 +677,11 @@ export function setSimulationStatus(newStatus: Status) {
     beeCnt = 0;
     setBeeCnt(beeCnt);
   }
+}
+
+export function setSimulationAlphaBeta(newAlpha: number, newBeta: number) {
+  alpha = newAlpha;
+  beta = newBeta;
 }
 
 let setBeeCnt: React.Dispatch<React.SetStateAction<number>>;

@@ -6,6 +6,10 @@ interface Props {
   beeCnt: number;
   showBodyOnly: boolean;
   setShowBodyOnly: React.Dispatch<React.SetStateAction<boolean>>;
+  alpha: number;
+  setAlpha: React.Dispatch<React.SetStateAction<number>>;
+  beta: number;
+  setBeta: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export function ControlPanel({
@@ -14,13 +18,17 @@ export function ControlPanel({
   beeCnt,
   showBodyOnly,
   setShowBodyOnly,
+  alpha,
+  setAlpha,
+  beta,
+  setBeta,
 }: Props) {
   return (
     <>
       <div
-        className="absolute sm:right-0 sm:top-0 lg:right-10 lg:top-10 z-10 flex
+        className="absolute sm:right-0 sm:top-0 lg:right-5 lg:top-5 z-10 flex
           w-72 flex-col justify-between gap-2 rounded-lg border-2
-          border-gray-100 bg-gray-100 p-5 font-spacemono shadow-lg
+          border-gray-100 bg-gray-100 p-2.5 font-spacemono shadow-lg
           hover:border-gray-200"
       >
         <h1 className="text-lg font-bold">Control Panel</h1>
@@ -62,6 +70,64 @@ export function ControlPanel({
             Reset
           </button>
         </div>
+
+        <hr className="border-dashed border-gray-200" />
+
+        <h1 className="text-md font-semibold">α (Crawl Rate)</h1>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.1}
+          value={alpha}
+          className="range appearance-none outline-none bg-gray-300 h-1 w-full
+            self-center rounded-full cursor-ew-resize
+            [&::-webkit-slider-thumb]:appearance-none
+            [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
+            [&::-webkit-slider-thumb]:border-none
+            [&::-webkit-slider-thumb]:bg-gray-500
+            [&::-webkit-slider-thumb]:rounded-full
+            [&::-moz-range-thumb]:bg-gray-500 [&::-moz-range-thumb]:w-2
+            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-none
+            [&::-moz-range-thumb]:rounded-full"
+          onChange={(e) => {
+            setAlpha(Number.parseFloat(e.target.value));
+          }}
+        />
+        <div className="flex justify-between self-center w-full -m-1">
+          <div className="w-0">0</div>
+          <div className="w-4">0.5</div>
+          <div>1</div>
+        </div>
+
+        <h1 className="text-md font-semibold">β (Climb Rate)</h1>
+        <input
+          type="range"
+          min={0}
+          max={1}
+          step={0.1}
+          value={beta}
+          className="range appearance-none outline-none bg-gray-300 h-1 w-full
+            self-center rounded-full cursor-ew-resize
+            [&::-webkit-slider-thumb]:appearance-none
+            [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
+            [&::-webkit-slider-thumb]:border-none
+            [&::-webkit-slider-thumb]:bg-gray-500
+            [&::-webkit-slider-thumb]:rounded-full
+            [&::-moz-range-thumb]:bg-gray-500 [&::-moz-range-thumb]:w-2
+            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-none
+            [&::-moz-range-thumb]:rounded-full"
+          onChange={(e) => {
+            setBeta(Number.parseFloat(e.target.value));
+          }}
+        />
+        <div className="flex justify-between self-center w-full -m-1">
+          <div className="w-0">0</div>
+          <div className="w-4">0.5</div>
+          <div>1</div>
+        </div>
+
+        <hr className="border-dashed border-gray-200" />
 
         <div className="flex justify-between">
           <div className="font-semibold">Bee Count</div>

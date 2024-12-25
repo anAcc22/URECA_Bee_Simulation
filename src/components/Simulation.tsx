@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Status } from "../types";
 
 import { resizeSimulation } from "./simulation";
-import { setSimulationStatus } from "./simulation";
+import { setSimulationStatus, setSimulationAlphaBeta } from "./simulation";
 import { initSimulation } from "./simulation";
 import { updateSetBeeCnt } from "./simulation";
 import { setShowBodyOnly } from "./simulation";
@@ -13,9 +13,17 @@ interface Props {
   status: Status;
   setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
   showBodyOnly: boolean;
+  alpha: number;
+  beta: number;
 }
 
-export function Simulation({ status, setBeeCnt, showBodyOnly }: Props) {
+export function Simulation({
+  status,
+  setBeeCnt,
+  showBodyOnly,
+  alpha,
+  beta,
+}: Props) {
   let ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -56,6 +64,7 @@ export function Simulation({ status, setBeeCnt, showBodyOnly }: Props) {
 
   useEffect(() => setSimulationStatus(status), [status]);
   useEffect(() => setShowBodyOnly(showBodyOnly), [showBodyOnly]);
+  useEffect(() => setSimulationAlphaBeta(alpha, beta), [alpha, beta]);
 
   return (
     <>

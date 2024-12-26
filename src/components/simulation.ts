@@ -742,6 +742,14 @@ export function updateSetDensityGraph(
   setDensityGraph = _;
 }
 
+let setWeightGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+
+export function updateSetWeightGraph(
+  _: React.Dispatch<React.SetStateAction<GraphData>>,
+) {
+  setWeightGraph = _;
+}
+
 let setAttachmentGraph: React.Dispatch<React.SetStateAction<GraphData>>;
 
 export function updateSetAttachmentGraph(
@@ -868,6 +876,62 @@ function buildDensityGraph() {
   return densityGraph;
 }
 
+function buildWeightGraph() {
+  let weightGraph: GraphData = new Array<DataPoint>();
+
+  let countGraph = new Array<number>();
+
+  let m = new Array<number>();
+  let w = new Array<number>();
+
+  let maxIdx = 0;
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 1);
+    }
+  });
+
+  for (let i = 0; i < maxIdx; i++) {
+    weightGraph.push({ x: 1, y: 1 });
+    countGraph.push(0);
+    m.push(0);
+    w.push(0);
+  }
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      const z = getZ(bee.pos);
+      countGraph[z]++;
+    }
+  });
+
+  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.nodeRadius, 3);
+
+  for (let i = 0; i < maxIdx; i++) {
+    const layerMass = Math.PI * beeMass * Math.pow(countGraph[i], 2);
+    m[i] = layerMass / Z_INTERVAL;
+    w[i] = layerMass * Bee.grav;
+  }
+
+  for (let i = maxIdx - 2; i >= 0; i--) {
+    w[i] += w[i + 1];
+  }
+
+  for (let i = 0; i < maxIdx; i++) {
+    weightGraph[i].x = Math.round(m[i]);
+    weightGraph[i].y = Math.round(w[i]);
+  }
+
+  weightGraph = weightGraph.sort((a, b) => a.x - b.x);
+
+  if (weightGraph.length === 0) {
+    weightGraph.push({ x: 1, y: 1 });
+  }
+
+  return weightGraph;
+}
+
 function buildAttachmentGraph() {
   let attachmentGraph: GraphData = new Array<DataPoint>();
   let maxIdx = 5;
@@ -915,7 +979,7 @@ export function initSimulation(c: CanvasRenderingContext2D) {
         collisionGrid.build();
 
         if (frames % 60 === 0) {
-          const graphs = 4;
+          const graphs = 5;
           if (graphIdx % graphs == 0) {
             const widthGraph = buildWidthGraph();
             setWidthGraph(widthGraph);
@@ -925,6 +989,9 @@ export function initSimulation(c: CanvasRenderingContext2D) {
           } else if (graphIdx % graphs == 2) {
             const densityGraph = buildDensityGraph();
             setDensityGraph(densityGraph);
+          } else if (graphIdx % graphs == 3) {
+            const weightGraph = buildWeightGraph();
+            setWeightGraph(weightGraph);
           } else {
             const attachmentGraph = buildAttachmentGraph();
             setAttachmentGraph(attachmentGraph);

@@ -21,6 +21,7 @@ interface Props {
   widthGraph: GraphData;
   areaGraph: GraphData;
   densityGraph: GraphData;
+  weightGraph: GraphData;
   attachmentGraph: GraphData;
 }
 
@@ -28,6 +29,7 @@ export function Graphs({
   widthGraph,
   areaGraph,
   densityGraph,
+  weightGraph,
   attachmentGraph,
 }: Props) {
   return (
@@ -36,7 +38,7 @@ export function Graphs({
         className="absolute top-0 left-0 z-50 flex p-5 font-spacemono w-4/5
           overflow-scroll text-sm no-scrollbar"
       >
-        <ResponsiveContainer minWidth={450} height={300}>
+        <ResponsiveContainer minWidth={500} height={300}>
           <ScatterChart
             margin={{
               top: 25,
@@ -77,7 +79,7 @@ export function Graphs({
           </ScatterChart>
         </ResponsiveContainer>
 
-        <ResponsiveContainer minWidth={450} height={300}>
+        <ResponsiveContainer minWidth={500} height={300}>
           <ScatterChart
             margin={{
               top: 25,
@@ -118,7 +120,7 @@ export function Graphs({
           </ScatterChart>
         </ResponsiveContainer>
 
-        <ResponsiveContainer minWidth={450} height={300}>
+        <ResponsiveContainer minWidth={500} height={300}>
           <ScatterChart
             margin={{
               top: 25,
@@ -159,7 +161,64 @@ export function Graphs({
           </ScatterChart>
         </ResponsiveContainer>
 
-        <ResponsiveContainer minWidth={450} height={300}>
+        <ResponsiveContainer minWidth={500} height={300}>
+          <ScatterChart
+            margin={{
+              top: 25,
+              right: 25,
+              bottom: 25,
+              left: 25,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              label={{ value: "M(z) (g/pixels)", dy: 15, fontSize: 15 }}
+              type="number"
+              dataKey="x"
+              name="x"
+              unit=""
+              scale="log"
+              tickFormatter={(value) =>
+                new Intl.NumberFormat("en-US", {
+                  notation: "scientific",
+                  maximumFractionDigits: 0,
+                }).format(value)
+              }
+              domain={[1, "auto"]}
+            />
+            <YAxis
+              label={{
+                value: "W(z) (g pixels/s²)",
+                dx: -35,
+                angle: -90,
+                fontSize: 15,
+              }}
+              type="number"
+              dataKey="y"
+              name="y"
+              unit=""
+              scale="log"
+              tickFormatter={(value) =>
+                new Intl.NumberFormat("en-US", {
+                  notation: "scientific",
+                  maximumFractionDigits: 0,
+                }).format(value)
+              }
+              domain={[1, "auto"]}
+            />
+            <ZAxis type="number" range={[50]} />
+            <Scatter
+              name="Data"
+              data={weightGraph}
+              fill="#555555"
+              line
+              isAnimationActive={false}
+              shape="circle"
+            />
+          </ScatterChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer minWidth={500} height={300}>
           <BarChart
             margin={{
               top: 25,

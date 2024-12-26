@@ -35,6 +35,7 @@ export default function App() {
   const [widthGraph, setWidthGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
   const [areaGraph, setAreaGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
   const [densityGraph, setDensityGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
+  const [weightGraph, setWeightGraph] = useState<GraphData>([{ x: 1, y: 1 }]);
   const [attachmentGraph, setAttachmentGraph] = useState<GraphData>([
     { x: 0, y: 0 },
   ]);
@@ -45,6 +46,7 @@ export default function App() {
         widthGraph={widthGraph}
         areaGraph={areaGraph}
         densityGraph={densityGraph}
+        weightGraph={weightGraph}
         attachmentGraph={attachmentGraph}
       ></Graphs>
       <ControlPanel
@@ -67,6 +69,7 @@ export default function App() {
         setWidthGraph={setWidthGraph}
         setAreaGraph={setAreaGraph}
         setDensityGraph={setDensityGraph}
+        setWeightGraph={setWeightGraph}
         setAttachmentGraph={setAttachmentGraph}
       ></Simulation>
     </>

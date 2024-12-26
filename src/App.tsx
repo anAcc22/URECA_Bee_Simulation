@@ -21,10 +21,11 @@ export default function App() {
   const [beta, setBeta] = useState<number>(0.0);
 
   const [widthGraph, setWidthGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
+  const [areaGraph, setAreaGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
 
   return (
     <>
-      <Graphs widthGraph={widthGraph}></Graphs>
+      <Graphs widthGraph={widthGraph} areaGraph={areaGraph}></Graphs>
       <ControlPanel
         status={status}
         setStatus={setStatus}
@@ -43,6 +44,7 @@ export default function App() {
         alpha={alpha}
         beta={beta}
         setWidthGraph={setWidthGraph}
+        setAreaGraph={setAreaGraph}
       ></Simulation>
     </>
   );

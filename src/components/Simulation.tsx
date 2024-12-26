@@ -8,6 +8,7 @@ import { setSimulationStatus, setSimulationAlphaBeta } from "./simulation";
 import { initSimulation } from "./simulation";
 import { updateSetBeeCnt } from "./simulation";
 import { updateSetWidthGraph } from "./simulation";
+import { updateSetAreaGraph } from "./simulation";
 import { setShowBodyOnly } from "./simulation";
 
 interface DataPoint {
@@ -24,6 +25,7 @@ interface Props {
   alpha: number;
   beta: number;
   setWidthGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+  setAreaGraph: React.Dispatch<React.SetStateAction<GraphData>>;
 }
 
 export function Simulation({
@@ -33,6 +35,7 @@ export function Simulation({
   alpha,
   beta,
   setWidthGraph,
+  setAreaGraph,
 }: Props) {
   let ref = useRef<HTMLCanvasElement>(null);
 
@@ -68,6 +71,7 @@ export function Simulation({
     initSimulation(ctx);
     updateSetBeeCnt(setBeeCnt);
     updateSetWidthGraph(setWidthGraph);
+    updateSetAreaGraph(setAreaGraph);
 
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);

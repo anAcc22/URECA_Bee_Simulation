@@ -221,7 +221,7 @@ class Bee {
   static readonly beeRadius = 15;
   static readonly beeLegs = 2;
 
-  static readonly detachChance = 0.00001;
+  static readonly detachChance = 0.000002;
   static readonly flyTowardsQueenChance = 0.5;
 
   static readonly queenChance = 0.02;
@@ -411,12 +411,12 @@ class Bee {
       const d = unitDiff(queenPos, this.pos);
       const flyTowardsQueen = booleanChance(Bee.flyTowardsQueenChance);
 
-      this.vel.x += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.xTime);
-      this.vel.y += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.yTime);
-
       if (flyTowardsQueen) {
         this.vel.x += d.x / 10;
         this.vel.x += d.y / 10;
+      } else {
+        this.vel.x += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.xTime);
+        this.vel.y += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.yTime);
       }
     }
   }
@@ -719,6 +719,14 @@ export function updateSetWidthGraph(
   setWidthGraph = _;
 }
 
+let setAreaGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+
+export function updateSetAreaGraph(
+  _: React.Dispatch<React.SetStateAction<GraphData>>,
+) {
+  setAreaGraph = _;
+}
+
 function getZ(pos: Vector2D) {
   return Math.floor((pos.y - rod.rodBound) / Z_INTERVAL);
 }
@@ -752,10 +760,46 @@ function buildWidthGraph() {
   for (let i = 0; i < maxIdx; i++) {
     if (maxRGraph[i] === 0) continue;
     widthGraph[i].y = (maxRGraph[i] - minLGraph[i]) / 1000;
-    widthGraph[i].y.toFixed(2);
+    widthGraph[i].y.toFixed(1);
   }
 
   return widthGraph;
+}
+
+function buildAreaGraph() {
+  let areaGraph: GraphData = new Array<DataPoint>();
+  let minLGraph = new Array<number>();
+  let maxRGraph = new Array<number>();
+  let maxIdx = 1;
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 1);
+    }
+  });
+
+  for (let i = 0; i < maxIdx; i++) {
+    areaGraph.push({ x: (Z_INTERVAL * i) / 1000, y: 0 });
+    minLGraph.push(canvasWidth);
+    maxRGraph.push(0);
+  }
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      const z = getZ(bee.pos);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x);
+    }
+  });
+
+  for (let i = 0; i < maxIdx; i++) {
+    if (maxRGraph[i] === 0) continue;
+    areaGraph[i].y = (maxRGraph[i] - minLGraph[i]) / 1000;
+    areaGraph[i].y = Math.PI * Math.pow(areaGraph[i].y, 2);
+    areaGraph[i].y.toFixed(1);
+  }
+
+  return areaGraph;
 }
 
 export function initSimulation(c: CanvasRenderingContext2D) {
@@ -782,6 +826,8 @@ export function initSimulation(c: CanvasRenderingContext2D) {
         if (frames % 100 === 0) {
           const widthGraph = buildWidthGraph();
           setWidthGraph(widthGraph);
+          const areaGraph = buildAreaGraph();
+          setAreaGraph(areaGraph);
         }
 
         frames++;

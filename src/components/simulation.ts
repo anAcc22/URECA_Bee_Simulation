@@ -350,9 +350,11 @@ class Bee {
 
     ctx.fillStyle = "";
 
+    ctx.setLineDash([2, 2]);
     ctx.beginPath();
     ctx.arc(this.pos.x, this.pos.y, Bee.beeRadius, 0, 2 * Math.PI);
     ctx.stroke();
+    ctx.setLineDash([]);
 
     ctx.strokeStyle = "hsla(0, 0%, 0%, 0.6)";
 
@@ -510,6 +512,8 @@ class Bee {
       if (!this.isAttachedToBoard()) {
         a.x += Bee.k * m * d.x;
         a.y += Bee.k * m * d.y;
+      } else {
+        a.y += (Bee.k * m * d.y) / 2.0;
       }
     }
 
@@ -727,6 +731,14 @@ export function updateSetAreaGraph(
   setAreaGraph = _;
 }
 
+let setDensityGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+
+export function updateSetDensityGraph(
+  _: React.Dispatch<React.SetStateAction<GraphData>>,
+) {
+  setDensityGraph = _;
+}
+
 function getZ(pos: Vector2D) {
   return Math.floor((pos.y - rod.rodBound) / Z_INTERVAL);
 }
@@ -739,7 +751,7 @@ function buildWidthGraph() {
 
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
-      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 1);
+      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 2);
     }
   });
 
@@ -752,15 +764,14 @@ function buildWidthGraph() {
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
       const z = getZ(bee.pos);
-      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x);
-      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - Bee.beeRadius);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + Bee.beeRadius);
     }
   });
 
   for (let i = 0; i < maxIdx; i++) {
     if (maxRGraph[i] === 0) continue;
     widthGraph[i].y = (maxRGraph[i] - minLGraph[i]) / 1000;
-    widthGraph[i].y.toFixed(1);
   }
 
   return widthGraph;
@@ -774,7 +785,7 @@ function buildAreaGraph() {
 
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
-      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 1);
+      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 2);
     }
   });
 
@@ -787,19 +798,63 @@ function buildAreaGraph() {
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
       const z = getZ(bee.pos);
-      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x);
-      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - Bee.beeRadius);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + Bee.beeRadius);
     }
   });
 
   for (let i = 0; i < maxIdx; i++) {
     if (maxRGraph[i] === 0) continue;
-    areaGraph[i].y = (maxRGraph[i] - minLGraph[i]) / 1000;
+    areaGraph[i].y = (maxRGraph[i] - minLGraph[i]) / 2000;
     areaGraph[i].y = Math.PI * Math.pow(areaGraph[i].y, 2);
-    areaGraph[i].y.toFixed(1);
   }
 
   return areaGraph;
+}
+
+function buildDensityGraph() {
+  let densityGraph: GraphData = new Array<DataPoint>();
+  let minLGraph = new Array<number>();
+  let maxRGraph = new Array<number>();
+  let countGraph = new Array<number>();
+  let maxIdx = 1;
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 2);
+    }
+  });
+
+  for (let i = 0; i < maxIdx; i++) {
+    densityGraph.push({ x: (Z_INTERVAL * i) / 1000, y: 0 });
+    minLGraph.push(canvasWidth);
+    maxRGraph.push(0);
+    countGraph.push(0);
+  }
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      const z = getZ(bee.pos);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - Bee.beeRadius);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + Bee.beeRadius);
+      countGraph[z]++;
+    }
+  });
+
+  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.nodeRadius, 3);
+
+  for (let i = 0; i < maxIdx; i++) {
+    if (maxRGraph[i] === 0) continue;
+    const r = (maxRGraph[i] - minLGraph[i]) / 2;
+    const area = Math.PI * Math.pow(r, 2);
+    const vol = area * Z_INTERVAL;
+    if (vol !== 0) {
+      densityGraph[i].y =
+        (Math.PI * beeMass * Math.pow(countGraph[i], 2)) / vol;
+    }
+  }
+
+  return densityGraph;
 }
 
 export function initSimulation(c: CanvasRenderingContext2D) {
@@ -828,6 +883,8 @@ export function initSimulation(c: CanvasRenderingContext2D) {
           setWidthGraph(widthGraph);
           const areaGraph = buildAreaGraph();
           setAreaGraph(areaGraph);
+          const densityGraph = buildDensityGraph();
+          setDensityGraph(densityGraph);
         }
 
         frames++;

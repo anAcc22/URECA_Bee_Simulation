@@ -408,7 +408,7 @@ class Bee {
       }
     } else {
       const m = this.isReverseNoise ? -0.005 : 0.005;
-      const d = unitDiff(queenPos, this.pos);
+      const d = unitDiff({ x: canvasWidth / 2, y: rod.rodBound }, this.pos);
       const flyTowardsQueen = booleanChance(Bee.flyTowardsQueenChance);
 
       if (flyTowardsQueen) {

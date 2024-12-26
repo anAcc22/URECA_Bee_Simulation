@@ -1,7 +1,15 @@
 import { ControlPanel } from "./components/ControlPanel";
 import { Simulation } from "./components/Simulation";
+import { Graphs } from "./components/Graphs";
 import { Status } from "./types";
 import { useState } from "react";
+
+interface DataPoint {
+  x: number;
+  y: number;
+}
+
+type GraphData = DataPoint[];
 
 export default function App() {
   const [status, setStatus] = useState<Status>("reset");
@@ -12,8 +20,11 @@ export default function App() {
   const [alpha, setAlpha] = useState<number>(0.0);
   const [beta, setBeta] = useState<number>(0.0);
 
+  const [widthGraph, setWidthGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
+
   return (
     <>
+      <Graphs widthGraph={widthGraph}></Graphs>
       <ControlPanel
         status={status}
         setStatus={setStatus}
@@ -31,6 +42,7 @@ export default function App() {
         showBodyOnly={showBodyOnly}
         alpha={alpha}
         beta={beta}
+        setWidthGraph={setWidthGraph}
       ></Simulation>
     </>
   );

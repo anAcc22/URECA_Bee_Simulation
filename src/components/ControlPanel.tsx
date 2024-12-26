@@ -28,7 +28,7 @@ export function ControlPanel({
       <div
         className="absolute sm:right-0 sm:top-0 lg:right-5 lg:top-5 z-10 flex
           w-72 flex-col justify-between gap-2 rounded-lg border-2
-          border-gray-100 bg-gray-100 p-2.5 font-spacemono shadow-lg
+          border-gray-100 bg-gray-100 p-2.5 font-spacemono shadow-md
           hover:border-gray-200"
       >
         <h1 className="text-lg font-bold">Control Panel</h1>
@@ -86,9 +86,9 @@ export function ControlPanel({
             [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
             [&::-webkit-slider-thumb]:border-gray-500
             [&::-webkit-slider-thumb]:bg-none
-            [&::-webkit-slider-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-none [&::-moz-range-thumb]:w-2
-            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-gray-500
+            [&::-webkit-slider-thumb]:rounded-full [&::-moz-range-thumb]:bg-none
+            [&::-moz-range-thumb]:w-2 [&::-moz-range-thumb]:h-2
+            [&::-moz-range-thumb]:border-gray-500
             [&::-moz-range-thumb]:rounded-full"
           onChange={(e) => {
             setAlpha(Number.parseFloat(e.target.value));
@@ -113,9 +113,9 @@ export function ControlPanel({
             [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
             [&::-webkit-slider-thumb]:border-gray-500
             [&::-webkit-slider-thumb]:bg-none
-            [&::-webkit-slider-thumb]:rounded-full
-            [&::-moz-range-thumb]:bg-none [&::-moz-range-thumb]:w-2
-            [&::-moz-range-thumb]:h-2 [&::-moz-range-thumb]:border-gray-500
+            [&::-webkit-slider-thumb]:rounded-full [&::-moz-range-thumb]:bg-none
+            [&::-moz-range-thumb]:w-2 [&::-moz-range-thumb]:h-2
+            [&::-moz-range-thumb]:border-gray-500
             [&::-moz-range-thumb]:rounded-full"
           onChange={(e) => {
             setBeta(Number.parseFloat(e.target.value));

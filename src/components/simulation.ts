@@ -2,6 +2,13 @@ import { Status } from "../types";
 
 // NOTE: <<- Utility Classes/Functions ->>
 
+interface DataPoint {
+  x: number;
+  y: number;
+}
+
+type GraphData = DataPoint[];
+
 interface Vector2D {
   x: number;
   y: number;
@@ -214,7 +221,7 @@ class Bee {
   static readonly beeRadius = 15;
   static readonly beeLegs = 2;
 
-  static readonly detachChance = 0.00005;
+  static readonly detachChance = 0.00001;
   static readonly flyTowardsQueenChance = 0.5;
 
   static readonly queenChance = 0.02;
@@ -649,10 +656,12 @@ let queenPos: Vector2D = { x: 0, y: 0 };
 const rod = new Rod();
 const collisionGrid = new CollisionGrid();
 
+const Z_INTERVAL = 30;
+
 let frames = 0;
 
 let curCnt = 0;
-let beeCnt = 500;
+let beeCnt = 300;
 
 let bees = new Map<number, Bee>(); // NOTE: (id (unique): number) -> (bee: Bee)
 
@@ -702,6 +711,53 @@ export function updateSetBeeCnt(
   setBeeCnt = _;
 }
 
+let setWidthGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+
+export function updateSetWidthGraph(
+  _: React.Dispatch<React.SetStateAction<GraphData>>,
+) {
+  setWidthGraph = _;
+}
+
+function getZ(pos: Vector2D) {
+  return Math.floor((pos.y - rod.rodBound) / Z_INTERVAL);
+}
+
+function buildWidthGraph() {
+  let widthGraph: GraphData = new Array<DataPoint>();
+  let minLGraph = new Array<number>();
+  let maxRGraph = new Array<number>();
+  let maxIdx = 1;
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 1);
+    }
+  });
+
+  for (let i = 0; i < maxIdx; i++) {
+    widthGraph.push({ x: (Z_INTERVAL * i) / 1000, y: 0 });
+    minLGraph.push(canvasWidth);
+    maxRGraph.push(0);
+  }
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      const z = getZ(bee.pos);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x);
+    }
+  });
+
+  for (let i = 0; i < maxIdx; i++) {
+    if (maxRGraph[i] === 0) continue;
+    widthGraph[i].y = (maxRGraph[i] - minLGraph[i]) / 1000;
+    widthGraph[i].y.toFixed(2);
+  }
+
+  return widthGraph;
+}
+
 export function initSimulation(c: CanvasRenderingContext2D) {
   ctx = c;
 
@@ -722,6 +778,12 @@ export function initSimulation(c: CanvasRenderingContext2D) {
       if (simulationStatus === "start") {
         bees.forEach((bee: Bee, _id: number) => bee.update());
         collisionGrid.build();
+
+        if (frames % 100 === 0) {
+          const widthGraph = buildWidthGraph();
+          setWidthGraph(widthGraph);
+        }
+
         frames++;
         if (frames % 50 === 0 && curCnt < beeCnt) {
           const spawnLeft = booleanChance(0.5);

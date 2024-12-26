@@ -10,6 +10,7 @@ import { updateSetBeeCnt } from "./simulation";
 import { updateSetWidthGraph } from "./simulation";
 import { updateSetAreaGraph } from "./simulation";
 import { updateSetDensityGraph } from "./simulation";
+import { updateSetAttachmentGraph } from "./simulation";
 import { setShowBodyOnly } from "./simulation";
 
 interface DataPoint {
@@ -28,6 +29,7 @@ interface Props {
   setWidthGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setAreaGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setDensityGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+  setAttachmentGraph: React.Dispatch<React.SetStateAction<GraphData>>;
 }
 
 export function Simulation({
@@ -39,6 +41,7 @@ export function Simulation({
   setWidthGraph,
   setAreaGraph,
   setDensityGraph,
+  setAttachmentGraph,
 }: Props) {
   let ref = useRef<HTMLCanvasElement>(null);
 
@@ -77,6 +80,7 @@ export function Simulation({
     updateSetWidthGraph(setWidthGraph);
     updateSetAreaGraph(setAreaGraph);
     updateSetDensityGraph(setDensityGraph);
+    updateSetAttachmentGraph(setAttachmentGraph);
 
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);

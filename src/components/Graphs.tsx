@@ -1,11 +1,12 @@
 import {
   ScatterChart,
+  BarChart,
+  Bar,
   Scatter,
   XAxis,
   YAxis,
   ZAxis,
   CartesianGrid,
-  Tooltip,
   ResponsiveContainer,
 } from "recharts";
 
@@ -20,16 +21,22 @@ interface Props {
   widthGraph: GraphData;
   areaGraph: GraphData;
   densityGraph: GraphData;
+  attachmentGraph: GraphData;
 }
 
-export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
+export function Graphs({
+  widthGraph,
+  areaGraph,
+  densityGraph,
+  attachmentGraph,
+}: Props) {
   return (
     <>
       <div
         className="absolute top-0 left-0 z-50 flex p-5 font-spacemono w-4/5
-          overflow-scroll text-sm"
+          overflow-scroll text-sm no-scrollbar"
       >
-        <ResponsiveContainer width={500} height={300}>
+        <ResponsiveContainer minWidth={450} height={300}>
           <ScatterChart
             margin={{
               top: 25,
@@ -48,7 +55,7 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
             />
             <YAxis
               label={{
-                value: "width (millipixels)",
+                value: "Diameter (millipixels)",
                 dx: -35,
                 angle: -90,
                 fontSize: 15,
@@ -59,7 +66,6 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
               unit=""
             />
             <ZAxis type="number" range={[50]} />
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
             <Scatter
               name="Data"
               data={widthGraph}
@@ -71,7 +77,7 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
           </ScatterChart>
         </ResponsiveContainer>
 
-        <ResponsiveContainer width={500} height={300}>
+        <ResponsiveContainer minWidth={450} height={300}>
           <ScatterChart
             margin={{
               top: 25,
@@ -90,7 +96,7 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
             />
             <YAxis
               label={{
-                value: "area (millipixels²)",
+                value: "Area (millipixels²)",
                 dx: -35,
                 angle: -90,
                 fontSize: 15,
@@ -101,7 +107,6 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
               unit=""
             />
             <ZAxis type="number" range={[50]} />
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
             <Scatter
               name="Data"
               data={areaGraph}
@@ -113,7 +118,7 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
           </ScatterChart>
         </ResponsiveContainer>
 
-        <ResponsiveContainer width={500} height={300}>
+        <ResponsiveContainer minWidth={450} height={300}>
           <ScatterChart
             margin={{
               top: 25,
@@ -143,7 +148,6 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
               unit=""
             />
             <ZAxis type="number" range={[50]} />
-            <Tooltip cursor={{ strokeDasharray: "3 3" }} />
             <Scatter
               name="Data"
               data={densityGraph}
@@ -153,6 +157,41 @@ export function Graphs({ widthGraph, areaGraph, densityGraph }: Props) {
               shape="circle"
             />
           </ScatterChart>
+        </ResponsiveContainer>
+
+        <ResponsiveContainer minWidth={450} height={300}>
+          <BarChart
+            margin={{
+              top: 25,
+              right: 25,
+              bottom: 25,
+              left: 25,
+            }}
+            data={attachmentGraph}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              label={{ value: "Attachment Number", dy: 15, fontSize: 15 }}
+              type="number"
+              dataKey="x"
+              name="x"
+              unit=""
+            />
+            <YAxis
+              label={{
+                value: "Count",
+                dx: -20,
+                angle: -90,
+                fontSize: 15,
+              }}
+              type="number"
+              dataKey="y"
+              name="y"
+              unit=""
+            />
+            <ZAxis type="number" range={[50]} />
+            <Bar dataKey="y" fill="#555555" isAnimationActive={false} />
+          </BarChart>
         </ResponsiveContainer>
       </div>
     </>

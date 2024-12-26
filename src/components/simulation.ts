@@ -222,7 +222,7 @@ class Bee {
   static readonly beeLegs = 2;
 
   static readonly detachChance = 0.000002;
-  static readonly flyTowardsQueenChance = 0.5;
+  static readonly flyTowardsQueenChance = 0.1;
 
   static readonly queenChance = 0.02;
   static readonly grav = 0.04;
@@ -662,6 +662,8 @@ const collisionGrid = new CollisionGrid();
 
 const Z_INTERVAL = 30;
 
+let graphIdx = 0;
+
 let frames = 0;
 
 let curCnt = 0;
@@ -698,6 +700,7 @@ export function setSimulationStatus(newStatus: Status) {
     bees.clear();
     frames = 0;
     curCnt = 0;
+    graphIdx = 0;
     setBeeCnt(curCnt);
   }
 }
@@ -737,6 +740,14 @@ export function updateSetDensityGraph(
   _: React.Dispatch<React.SetStateAction<GraphData>>,
 ) {
   setDensityGraph = _;
+}
+
+let setAttachmentGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+
+export function updateSetAttachmentGraph(
+  _: React.Dispatch<React.SetStateAction<GraphData>>,
+) {
+  setAttachmentGraph = _;
 }
 
 function getZ(pos: Vector2D) {
@@ -857,6 +868,31 @@ function buildDensityGraph() {
   return densityGraph;
 }
 
+function buildAttachmentGraph() {
+  let attachmentGraph: GraphData = new Array<DataPoint>();
+  let maxIdx = 1;
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      const cnt = bee.supportSet.length + bee.attachSet.length;
+      maxIdx = Math.max(maxIdx, cnt + 1);
+    }
+  });
+
+  for (let i = 0; i < maxIdx; i++) {
+    attachmentGraph.push({ x: i, y: 0 });
+  }
+
+  bees.forEach((bee: Bee, _id: number) => {
+    if (bee.aerialState === "attached") {
+      const cnt = bee.supportSet.length + bee.attachSet.length;
+      attachmentGraph[cnt].y++;
+    }
+  });
+
+  return attachmentGraph;
+}
+
 export function initSimulation(c: CanvasRenderingContext2D) {
   ctx = c;
 
@@ -878,13 +914,22 @@ export function initSimulation(c: CanvasRenderingContext2D) {
         bees.forEach((bee: Bee, _id: number) => bee.update());
         collisionGrid.build();
 
-        if (frames % 100 === 0) {
-          const widthGraph = buildWidthGraph();
-          setWidthGraph(widthGraph);
-          const areaGraph = buildAreaGraph();
-          setAreaGraph(areaGraph);
-          const densityGraph = buildDensityGraph();
-          setDensityGraph(densityGraph);
+        if (frames % 60 === 0) {
+          const graphs = 4;
+          if (graphIdx % graphs == 0) {
+            const widthGraph = buildWidthGraph();
+            setWidthGraph(widthGraph);
+          } else if (graphIdx % graphs == 1) {
+            const areaGraph = buildAreaGraph();
+            setAreaGraph(areaGraph);
+          } else if (graphIdx % graphs == 2) {
+            const densityGraph = buildDensityGraph();
+            setDensityGraph(densityGraph);
+          } else {
+            const attachmentGraph = buildAttachmentGraph();
+            setAttachmentGraph(attachmentGraph);
+          }
+          graphIdx++;
         }
 
         frames++;

@@ -92,6 +92,10 @@ export function ControlPanel({
             [&::-moz-range-thumb]:rounded-full"
           onChange={(e) => {
             setAlpha(Number.parseFloat(e.target.value));
+            localStorage.setItem(
+              "alpha",
+              Number.parseFloat(e.target.value).toString(),
+            );
           }}
         />
         <div className="flex justify-between self-center w-full -m-1">
@@ -119,6 +123,10 @@ export function ControlPanel({
             [&::-moz-range-thumb]:rounded-full"
           onChange={(e) => {
             setBeta(Number.parseFloat(e.target.value));
+            localStorage.setItem(
+              "beta",
+              Number.parseFloat(e.target.value).toString(),
+            );
           }}
         />
         <div className="flex justify-between self-center w-full -m-1">
@@ -139,14 +147,20 @@ export function ControlPanel({
           <div className="flex gap-1">
             <button
               className={showBodyOnly ? "" : "font-semibold"}
-              onClick={() => setShowBodyOnly(false)}
+              onClick={() => {
+                setShowBodyOnly(false);
+                localStorage.setItem("showBodyOnly", "false");
+              }}
             >
               No
             </button>
             |
             <button
               className={showBodyOnly ? "font-semibold" : ""}
-              onClick={() => setShowBodyOnly(true)}
+              onClick={() => {
+                setShowBodyOnly(true);
+                localStorage.setItem("showBodyOnly", "true");
+              }}
             >
               Yes
             </button>

@@ -15,10 +15,22 @@ export default function App() {
   const [status, setStatus] = useState<Status>("reset");
   const [beeCnt, setBeeCnt] = useState<number>(0);
 
-  const [showBodyOnly, setShowBodyOnly] = useState<boolean>(false);
+  const [showBodyOnly, setShowBodyOnly] = useState<boolean>(
+    localStorage.getItem("showBodyOnly")
+      ? localStorage.getItem("showBodyOnly")! === "true"
+      : false,
+  );
 
-  const [alpha, setAlpha] = useState<number>(0.0);
-  const [beta, setBeta] = useState<number>(0.0);
+  const [alpha, setAlpha] = useState<number>(
+    localStorage.getItem("alpha")
+      ? Number.parseFloat(localStorage.getItem("alpha")!)
+      : 0.0,
+  );
+  const [beta, setBeta] = useState<number>(
+    localStorage.getItem("beta")
+      ? Number.parseFloat(localStorage.getItem("alpha")!)
+      : 0.0,
+  );
 
   const [widthGraph, setWidthGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
   const [areaGraph, setAreaGraph] = useState<GraphData>([{ x: 0, y: 0 }]);

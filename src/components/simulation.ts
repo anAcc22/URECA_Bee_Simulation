@@ -870,7 +870,7 @@ function buildDensityGraph() {
 
 function buildAttachmentGraph() {
   let attachmentGraph: GraphData = new Array<DataPoint>();
-  let maxIdx = 1;
+  let maxIdx = 5;
 
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {

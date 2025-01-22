@@ -73,7 +73,6 @@ export default function App() {
         status={status}
         setBeeCnt={setBeeCnt}
         maxBeeCnt={maxBeeCnt}
-        setMaxBeeCnt={setMaxBeeCnt}
         showBodyOnly={showBodyOnly}
         alpha={alpha}
         beta={beta}

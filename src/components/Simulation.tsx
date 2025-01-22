@@ -27,7 +27,6 @@ interface Props {
   status: Status;
   setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
   maxBeeCnt: number;
-  setMaxBeeCnt: React.Dispatch<React.SetStateAction<number>>;
   showBodyOnly: boolean;
   alpha: number;
   beta: number;
@@ -42,7 +41,6 @@ export function Simulation({
   status,
   setBeeCnt,
   maxBeeCnt,
-  setMaxBeeCnt,
   showBodyOnly,
   alpha,
   beta,

@@ -4,6 +4,8 @@ interface Props {
   status: Status;
   setStatus: React.Dispatch<React.SetStateAction<Status>>;
   beeCnt: number;
+  maxBeeCnt: number;
+  setMaxBeeCnt: React.Dispatch<React.SetStateAction<number>>;
   showBodyOnly: boolean;
   setShowBodyOnly: React.Dispatch<React.SetStateAction<boolean>>;
   alpha: number;
@@ -16,6 +18,8 @@ export function ControlPanel({
   status,
   setStatus,
   beeCnt,
+  maxBeeCnt,
+  setMaxBeeCnt,
   showBodyOnly,
   setShowBodyOnly,
   alpha,
@@ -81,7 +85,7 @@ export function ControlPanel({
           <div className="flex gap-1 font-semibold">
             <button
               className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-rose-200"
+                hover:bg-gray-300 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.max(0.0, alpha - 0.1)) / 10;
                 setAlpha(newVal);
@@ -92,7 +96,7 @@ export function ControlPanel({
             </button>
             <button
               className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-emerald-200"
+                hover:bg-gray-300 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.min(1.0, alpha + 0.1)) / 10;
                 setAlpha(newVal);
@@ -112,7 +116,7 @@ export function ControlPanel({
           <div className="flex gap-1 font-semibold">
             <button
               className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-rose-200"
+                hover:bg-gray-300 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.max(0.0, beta - 0.1)) / 10;
                 setBeta(newVal);
@@ -123,7 +127,7 @@ export function ControlPanel({
             </button>
             <button
               className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-emerald-200"
+                hover:bg-gray-300 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.min(1.0, beta + 0.1)) / 10;
                 setBeta(newVal);
@@ -135,11 +139,43 @@ export function ControlPanel({
           </div>
         </div>
 
+        <div className="flex justify-between">
+          <div>
+            <span className="text-md font-semibold">Max. Bee Count: </span>
+            <textarea
+              rows={1}
+              cols={4}
+              placeholder={maxBeeCnt.toString()}
+              className="appearance-none bg-gray-100 resize-none"
+              id="textMaxBeeCnt"
+            ></textarea>
+          </div>
+          <button
+            className="bg-gray-400 text-white w-12 rounded-full
+              hover:bg-gray-300 active:bg-amber-300 font-semibold"
+            onClick={() => {
+              const newVal = (
+                document.getElementById("textMaxBeeCnt") as HTMLTextAreaElement
+              ).value;
+              if (newVal.length && parseInt(newVal).toString() === newVal) {
+                setMaxBeeCnt(parseInt(newVal));
+                localStorage.setItem("maxBeeCnt", newVal);
+              }
+            }}
+          >
+            SET
+          </button>
+        </div>
+
         <hr className="border-dashed border-gray-200" />
 
         <div className="flex justify-between">
           <div className="font-semibold">Bee Count</div>
-          <div>{beeCnt}</div>
+          <div>
+            <span>
+              {beeCnt}/{maxBeeCnt}
+            </span>
+          </div>
         </div>
 
         <div className="flex justify-between">

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { Status } from "../types";
 
 import { resizeSimulation } from "./simulation";
-import { setSimulationStatus, setSimulationAlphaBeta } from "./simulation";
+import { setSimulationStatus, setSimulationAlphaBeta, setSimulationMaxBeeCnt } from "./simulation";
 import { initSimulation } from "./simulation";
 import { updateSetBeeCnt } from "./simulation";
 
@@ -26,6 +26,8 @@ type GraphData = DataPoint[];
 interface Props {
   status: Status;
   setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
+  maxBeeCnt: number;
+  setMaxBeeCnt: React.Dispatch<React.SetStateAction<number>>;
   showBodyOnly: boolean;
   alpha: number;
   beta: number;
@@ -39,6 +41,8 @@ interface Props {
 export function Simulation({
   status,
   setBeeCnt,
+  maxBeeCnt,
+  setMaxBeeCnt,
   showBodyOnly,
   alpha,
   beta,
@@ -95,6 +99,7 @@ export function Simulation({
   useEffect(() => setSimulationStatus(status), [status]);
   useEffect(() => setShowBodyOnly(showBodyOnly), [showBodyOnly]);
   useEffect(() => setSimulationAlphaBeta(alpha, beta), [alpha, beta]);
+  useEffect(() => setSimulationMaxBeeCnt(maxBeeCnt), [maxBeeCnt]);
 
   return (
     <>

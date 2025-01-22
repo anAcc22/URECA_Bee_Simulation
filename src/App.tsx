@@ -14,6 +14,13 @@ type GraphData = DataPoint[];
 export default function App() {
   const [status, setStatus] = useState<Status>("reset");
   const [beeCnt, setBeeCnt] = useState<number>(0);
+  const [maxBeeCnt, setMaxBeeCnt] = useState<number>(
+    parseInt(
+      localStorage.getItem("maxBeeCnt")
+        ? localStorage.getItem("maxBeeCnt")!
+        : "300",
+    ),
+  );
 
   const [showBodyOnly, setShowBodyOnly] = useState<boolean>(
     localStorage.getItem("showBodyOnly")
@@ -53,6 +60,8 @@ export default function App() {
         status={status}
         setStatus={setStatus}
         beeCnt={beeCnt}
+        maxBeeCnt={maxBeeCnt}
+        setMaxBeeCnt={setMaxBeeCnt}
         showBodyOnly={showBodyOnly}
         setShowBodyOnly={setShowBodyOnly}
         alpha={alpha}
@@ -63,6 +72,8 @@ export default function App() {
       <Simulation
         status={status}
         setBeeCnt={setBeeCnt}
+        maxBeeCnt={maxBeeCnt}
+        setMaxBeeCnt={setMaxBeeCnt}
         showBodyOnly={showBodyOnly}
         alpha={alpha}
         beta={beta}

@@ -710,6 +710,10 @@ export function setSimulationAlphaBeta(newAlpha: number, newBeta: number) {
   beta = newBeta;
 }
 
+export function setSimulationMaxBeeCnt(newMaxBeeCnt: number) {
+  beeCnt = newMaxBeeCnt;
+}
+
 let setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
 
 export function updateSetBeeCnt(

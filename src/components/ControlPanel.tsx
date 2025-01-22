@@ -73,64 +73,66 @@ export function ControlPanel({
 
         <hr className="border-dashed border-gray-200" />
 
-        <h1 className="text-md font-semibold">α (Crawl Rate)</h1>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.1}
-          value={alpha}
-          className="range appearance-none outline-none bg-gray-300 h-1 w-full
-            self-center rounded-full cursor-ew-resize
-            [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
-            [&::-webkit-slider-thumb]:appearance-none
-            [&::-webkit-slider-thumb]:bg-gray-500
-            [&::-webkit-slider-thumb]:rounded-full [&::-moz-range-thumb]:bg-none
-            [&::-moz-range-thumb]:w-2 [&::-moz-range-thumb]:h-2
-            [&::-moz-range-thumb]:border-gray-500
-            [&::-moz-range-thumb]:rounded-full"
-          onChange={(e) => {
-            setAlpha(Number.parseFloat(e.target.value));
-            localStorage.setItem(
-              "alpha",
-              Number.parseFloat(e.target.value).toString(),
-            );
-          }}
-        />
-        <div className="flex justify-between self-center w-full -m-1">
-          <div className="w-0">0</div>
-          <div className="w-4">0.5</div>
-          <div>1</div>
+        <div className="flex justify-between">
+          <div>
+            <span className="text-md font-semibold">Crawl Rate: </span>
+            <span>{alpha}</span>
+          </div>
+          <div className="flex gap-1 font-semibold">
+            <button
+              className="bg-gray-400 text-white w-6 rounded-full
+                hover:bg-gray-300 active:bg-rose-200"
+              onClick={() => {
+                const newVal = Math.round(10 * Math.max(0.0, alpha - 0.1)) / 10;
+                setAlpha(newVal);
+                localStorage.setItem("alpha", newVal.toString());
+              }}
+            >
+              −
+            </button>
+            <button
+              className="bg-gray-400 text-white w-6 rounded-full
+                hover:bg-gray-300 active:bg-emerald-200"
+              onClick={() => {
+                const newVal = Math.round(10 * Math.min(1.0, alpha + 0.1)) / 10;
+                setAlpha(newVal);
+                localStorage.setItem("alpha", newVal.toString());
+              }}
+            >
+              +
+            </button>
+          </div>
         </div>
 
-        <h1 className="text-md font-semibold">β (Climb Rate)</h1>
-        <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.1}
-          value={beta}
-          className="range appearance-none outline-none bg-gray-300 h-1 w-full
-            self-center rounded-full cursor-ew-resize
-            [&::-webkit-slider-thumb]:w-2 [&::-webkit-slider-thumb]:h-2
-            [&::-webkit-slider-thumb]:appearance-none
-            [&::-webkit-slider-thumb]:bg-gray-500
-            [&::-webkit-slider-thumb]:rounded-full [&::-moz-range-thumb]:bg-none
-            [&::-moz-range-thumb]:w-2 [&::-moz-range-thumb]:h-2
-            [&::-moz-range-thumb]:border-gray-500
-            [&::-moz-range-thumb]:rounded-full"
-          onChange={(e) => {
-            setBeta(Number.parseFloat(e.target.value));
-            localStorage.setItem(
-              "beta",
-              Number.parseFloat(e.target.value).toString(),
-            );
-          }}
-        />
-        <div className="flex justify-between self-center w-full -m-1">
-          <div className="w-0">0</div>
-          <div className="w-4">0.5</div>
-          <div>1</div>
+        <div className="flex justify-between">
+          <div>
+            <span className="text-md font-semibold">Climb Rate: </span>
+            <span>{beta}</span>
+          </div>
+          <div className="flex gap-1 font-semibold">
+            <button
+              className="bg-gray-400 text-white w-6 rounded-full
+                hover:bg-gray-300 active:bg-rose-200"
+              onClick={() => {
+                const newVal = Math.round(10 * Math.max(0.0, beta - 0.1)) / 10;
+                setBeta(newVal);
+                localStorage.setItem("beta", newVal.toString());
+              }}
+            >
+              −
+            </button>
+            <button
+              className="bg-gray-400 text-white w-6 rounded-full
+                hover:bg-gray-300 active:bg-emerald-200"
+              onClick={() => {
+                const newVal = Math.round(10 * Math.min(1.0, beta + 0.1)) / 10;
+                setBeta(newVal);
+                localStorage.setItem("beta", newVal.toString());
+              }}
+            >
+              +
+            </button>
+          </div>
         </div>
 
         <hr className="border-dashed border-gray-200" />

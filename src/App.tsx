@@ -28,7 +28,7 @@ export default function App() {
   );
   const [beta, setBeta] = useState<number>(
     localStorage.getItem("beta")
-      ? Number.parseFloat(localStorage.getItem("alpha")!)
+      ? Number.parseFloat(localStorage.getItem("beta")!)
       : 0.0,
   );
 

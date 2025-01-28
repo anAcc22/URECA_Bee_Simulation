@@ -548,9 +548,10 @@ class Bee {
       const d = unitDiff(this.pos, bees.get(i as number)!.pos);
       const dist = bees.get(i as number)!.beeRadius + this.beeRadius;
       const massRatio = bees.get(i as number)!.grav / Bee.baseGrav;
-      let m = dist * massRatio;
+      let m = dist;
       m -= euclidDist(bees.get(i as number)!.pos, this.pos);
       m = clamp(m, 0, dist);
+      m *= massRatio;
       if (!this.isAttachedToBoard()) {
         a.x += Bee.k * m * d.x;
         a.y += Bee.k * m * d.y;
@@ -560,23 +561,25 @@ class Bee {
     }
 
     const massRatio = this.grav / Bee.baseGrav;
-    const massRatioAdj = 0.7 + 0.3 * (1.0 - (massRatio - 0.5));
+    const massRatioAdj = 0.5 + 1.0 * (1.0 - (massRatio - 0.5));
 
     for (const i of this.attachSet) {
       if ((i as Vector2D).x === undefined) {
         const d = unitDiff(this.pos, bees.get(i as number)!.pos);
         const dist = bees.get(i as number)!.beeRadius + this.beeRadius;
-        let m = dist * massRatioAdj;
+        let m = dist;
         m -= euclidDist(bees.get(i as number)!.pos, this.pos);
         m = clamp(m, 0, dist);
+        m *= massRatioAdj;
         a.x += Bee.k * m * d.x;
         a.y += Bee.k * m * d.y;
       } else {
         const v = i as Vector2D;
         const d = unitDiff(this.pos, v);
-        let m = this.beeRadius * massRatioAdj;
+        let m = this.beeRadius;
         m -= euclidDist(v, this.pos);
         m = clamp(m, 0, this.beeRadius);
+        m *= massRatioAdj;
         a.x += Bee.k * m * d.x;
         a.y += Bee.k * m * d.y;
       }
@@ -1024,7 +1027,11 @@ function buildAttachmentGraph() {
   return attachmentGraph;
 }
 
-export function initSimulation(c: CanvasRenderingContext2D) {
+export function initSimulation(
+  canvas: HTMLCanvasElement,
+  c: CanvasRenderingContext2D,
+  setImageLink: React.Dispatch<React.SetStateAction<string>>,
+) {
   ctx = c;
 
   const animate = () => {
@@ -1064,6 +1071,7 @@ export function initSimulation(c: CanvasRenderingContext2D) {
             setAttachmentGraph(attachmentGraph);
           }
           graphIdx++;
+          setImageLink(canvas.toDataURL("image/png"));
         }
 
         frames++;

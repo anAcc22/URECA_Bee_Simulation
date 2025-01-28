@@ -28,6 +28,8 @@ export default function App() {
       : false,
   );
 
+  const [imageLink, setImageLink] = useState<string>("");
+
   const [alpha, setAlpha] = useState<number>(
     localStorage.getItem("alpha")
       ? Number.parseFloat(localStorage.getItem("alpha")!)
@@ -68,6 +70,7 @@ export default function App() {
         attachmentGraph={attachmentGraph}
       ></Graphs>
       <ControlPanel
+        imageLink={imageLink}
         status={status}
         setStatus={setStatus}
         beeCnt={beeCnt}
@@ -85,6 +88,7 @@ export default function App() {
         setMassDelta={setMassDelta}
       ></ControlPanel>
       <Simulation
+        setImageLink={setImageLink}
         status={status}
         setBeeCnt={setBeeCnt}
         maxBeeCnt={maxBeeCnt}

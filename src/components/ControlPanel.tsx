@@ -1,6 +1,7 @@
 import { Status } from "../types";
 
 interface Props {
+  imageLink: string;
   status: Status;
   setStatus: React.Dispatch<React.SetStateAction<Status>>;
   beeCnt: number;
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function ControlPanel({
+  imageLink,
   status,
   setStatus,
   beeCnt,
@@ -271,6 +273,19 @@ export function ControlPanel({
               Yes
             </button>
           </div>
+        </div>
+
+        <div className="flex justify-between">
+          <a className="hover:cursor-pointer text-amber-700 rounded-full">
+            Download Data
+          </a>
+          <a
+            download="screenshot.png"
+            href={imageLink}
+            className="hover:cursor-pointer text-amber-700 rounded-full"
+          >
+            Save (PNG)
+          </a>
         </div>
       </div>
     </>

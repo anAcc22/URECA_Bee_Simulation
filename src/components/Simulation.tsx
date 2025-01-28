@@ -29,6 +29,7 @@ interface DataPoint {
 type GraphData = DataPoint[];
 
 interface Props {
+  setImageLink: React.Dispatch<React.SetStateAction<string>>;
   status: Status;
   setBeeCnt: React.Dispatch<React.SetStateAction<number>>;
   maxBeeCnt: number;
@@ -45,6 +46,7 @@ interface Props {
 }
 
 export function Simulation({
+  setImageLink,
   status,
   setBeeCnt,
   maxBeeCnt,
@@ -90,7 +92,7 @@ export function Simulation({
     };
 
     resize();
-    initSimulation(ctx);
+    initSimulation(canvas, ctx, setImageLink);
     updateSetBeeCnt(setBeeCnt);
 
     updateSetWidthGraph(setWidthGraph);

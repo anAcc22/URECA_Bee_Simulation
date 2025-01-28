@@ -56,6 +56,28 @@ function booleanChance(pWin: number) {
   return Math.random() <= pWin;
 }
 
+function boxMuller() {
+  /* NOTE: <<- Implementation ->>
+   * Returns a value between [0, 1].
+   */
+  let u = 0,
+    v = 0;
+  while (u === 0) u = Math.random();
+  while (v === 0) v = Math.random();
+  let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  num = num / 10.0 + 0.5;
+  if (num > 1 || num < 0) return boxMuller();
+  return num;
+}
+
+function getRandomRatio(delta: number) {
+  /* NOTE: <<- Implementation ->>
+   * Returns a value between [1-delta, 1+delta].
+   */
+  if (Math.abs(delta) < 1e-9) return 1;
+  return boxMuller() * (2 * delta) + (1.0 - delta);
+}
+
 // NOTE: <<- Improved Perlin Noise ->>
 
 class PerlinNoise {
@@ -217,9 +239,12 @@ class Bee {
   vel: Vector2D;
   det: Vector2D;
 
-  static readonly nodeRadius = 5;
-  static readonly beeRadius = 15;
+  static readonly baseNodeRadius = 5;
+  static readonly baseBeeRadius = 15;
   static readonly beeLegs = 2;
+
+  nodeRadius: number;
+  beeRadius: number;
 
   static readonly detachChance = 0.000002;
   static readonly flyTowardsQueenChance = 0.1;
@@ -242,6 +267,22 @@ class Bee {
 
   readonly xtimeStep = clamp(Math.random(), 0.1, 0.5);
   readonly ytimeStep = clamp(Math.random(), 0.1, 0.5);
+
+  constructor(id: number, x: number, y: number, vx: number, vy: number) {
+    this.id = id;
+
+    const ratio = getRandomRatio(sizeDelta);
+
+    this.nodeRadius = ratio * Bee.baseNodeRadius;
+    this.beeRadius = ratio * Bee.baseBeeRadius;
+
+    this.pos = { x, y };
+    this.vel = { x: vx, y: vy };
+    this.det = { x: 0, y: 0 };
+
+    this.xTime = 200 * Math.random();
+    this.yTime = 200 * Math.random();
+  }
 
   static resolveBeeCollision(i: number, j: number) {
     const xVelDiff = bees.get(i)!.vel.x - bees.get(j)!.vel.x;
@@ -270,25 +311,14 @@ class Bee {
     }
   }
 
-  constructor(id: number, x: number, y: number, vx: number, vy: number) {
-    this.id = id;
-
-    this.pos = { x, y };
-    this.vel = { x: vx, y: vy };
-    this.det = { x: 0, y: 0 };
-
-    this.xTime = 200 * Math.random();
-    this.yTime = 200 * Math.random();
-  }
-
   isTouchingBoard(): boolean {
-    return this.pos.y <= rod.rodBound + Bee.beeRadius;
+    return this.pos.y <= rod.rodBound + this.beeRadius;
   }
 
   isTouchingWall(): boolean {
-    if (this.pos.y >= canvasHeight - Bee.beeRadius) return true;
-    if (this.pos.x <= Bee.beeRadius) return true;
-    if (this.pos.x >= canvasWidth - Bee.beeRadius) return true;
+    if (this.pos.y >= canvasHeight - this.beeRadius) return true;
+    if (this.pos.x <= this.beeRadius) return true;
+    if (this.pos.x >= canvasWidth - this.beeRadius) return true;
     return false;
   }
 
@@ -316,7 +346,8 @@ class Bee {
     const ans = new Array<number>();
 
     for (const id of ids) {
-      if (euclidDist(this.pos, bees.get(id)!.pos) <= 2 * Bee.beeRadius) {
+      const dist = bees.get(id)!.beeRadius + this.beeRadius;
+      if (euclidDist(this.pos, bees.get(id)!.pos) <= dist) {
         ans.push(id);
       }
     }
@@ -340,7 +371,7 @@ class Bee {
     }
 
     ctx.beginPath();
-    ctx.arc(this.pos.x, this.pos.y, (4 / 5) * Bee.nodeRadius, 0, 2 * Math.PI);
+    ctx.arc(this.pos.x, this.pos.y, (4 / 5) * this.nodeRadius, 0, 2 * Math.PI);
     ctx.fill();
   }
 
@@ -352,7 +383,7 @@ class Bee {
 
     ctx.setLineDash([2, 2]);
     ctx.beginPath();
-    ctx.arc(this.pos.x, this.pos.y, Bee.beeRadius, 0, 2 * Math.PI);
+    ctx.arc(this.pos.x, this.pos.y, this.beeRadius, 0, 2 * Math.PI);
     ctx.stroke();
     ctx.setLineDash([]);
 
@@ -468,9 +499,10 @@ class Bee {
 
     if (otherBees !== null) {
       for (const i of otherBees) {
+        const dist = bees.get(i)!.beeRadius + this.beeRadius;
         if (
           this.pos.y > bees.get(i)!.pos.y + 1.0 &&
-          euclidDist(this.pos, bees.get(i)!.pos) <= 2 * Bee.beeRadius + 7.5 &&
+          euclidDist(this.pos, bees.get(i)!.pos) <= dist + 7.5 &&
           bees.get(i)!.aerialState === "attached"
         ) {
           candidates.push([i, euclidDist(this.pos, bees.get(i)!.pos)]);
@@ -479,9 +511,9 @@ class Bee {
     }
 
     candidates.sort((x, y) => {
-      if (x[1] <= Bee.beeRadius / 2 || (x[0] as Vector2D).x !== undefined)
+      if (x[1] <= this.beeRadius / 2 || (x[0] as Vector2D).x !== undefined)
         return -1;
-      if (y[1] <= Bee.beeRadius / 2 || (y[0] as Vector2D).x !== undefined)
+      if (y[1] <= this.beeRadius / 2 || (y[0] as Vector2D).x !== undefined)
         return 1;
       return x[1] - y[1];
     });
@@ -506,9 +538,10 @@ class Bee {
 
     for (const i of this.supportSet) {
       const d = unitDiff(this.pos, bees.get(i as number)!.pos);
-      let m = 2 * Bee.beeRadius;
+      const dist = bees.get(i as number)!.beeRadius + this.beeRadius;
+      let m = dist;
       m -= euclidDist(bees.get(i as number)!.pos, this.pos);
-      m = clamp(m, 0, 2 * Bee.beeRadius);
+      m = clamp(m, 0, dist);
       if (!this.isAttachedToBoard()) {
         a.x += Bee.k * m * d.x;
         a.y += Bee.k * m * d.y;
@@ -520,17 +553,18 @@ class Bee {
     for (const i of this.attachSet) {
       if ((i as Vector2D).x === undefined) {
         const d = unitDiff(this.pos, bees.get(i as number)!.pos);
-        let m = 2 * Bee.beeRadius;
+        const dist = bees.get(i as number)!.beeRadius + this.beeRadius;
+        let m = dist;
         m -= euclidDist(bees.get(i as number)!.pos, this.pos);
-        m = clamp(m, 0, 2 * Bee.beeRadius);
+        m = clamp(m, 0, dist);
         a.x += Bee.k * m * d.x;
         a.y += Bee.k * m * d.y;
       } else {
         const v = i as Vector2D;
         const d = unitDiff(this.pos, v);
-        let m = Bee.beeRadius;
+        let m = this.beeRadius;
         m -= euclidDist(v, this.pos);
-        m = clamp(m, 0, 2 * Bee.beeRadius);
+        m = clamp(m, 0, this.beeRadius);
         a.x += Bee.k * m * d.x;
         a.y += Bee.k * m * d.y;
       }
@@ -613,13 +647,13 @@ class Bee {
     this.pos = {
       x: clamp(
         xPosOld + this.vel.x,
-        Bee.nodeRadius,
-        canvasWidth - Bee.nodeRadius,
+        this.nodeRadius,
+        canvasWidth - this.nodeRadius,
       ),
       y: clamp(
         yPosOld + this.vel.y,
-        rod.rodBound + Bee.nodeRadius,
-        canvasHeight - Bee.nodeRadius,
+        rod.rodBound + this.nodeRadius,
+        canvasHeight - this.nodeRadius,
       ),
     };
 
@@ -653,6 +687,9 @@ let canvasHeight = 0;
 let alpha = 0.0;
 let beta = 0.0;
 
+let sizeDelta = 0.0;
+// let massDelta = 0.0;
+
 let simulationStatus: Status = "reset";
 
 let queenPos: Vector2D = { x: 0, y: 0 };
@@ -675,7 +712,13 @@ function drawQueenIndicator() {
   let t = performance.now();
   ctx.fillStyle = `hsla(20, 60%, ${Math.abs(Math.sin(t / 500)) * 30 + 20}%, 1)`;
   ctx.beginPath();
-  ctx.arc(canvasWidth / 2, canvasHeight / 3, Bee.nodeRadius, 0, 2 * Math.PI);
+  ctx.arc(
+    canvasWidth / 2,
+    canvasHeight / 3,
+    Bee.baseNodeRadius,
+    0,
+    2 * Math.PI,
+  );
   ctx.fill();
 }
 
@@ -708,6 +751,10 @@ export function setSimulationStatus(newStatus: Status) {
 export function setSimulationAlphaBeta(newAlpha: number, newBeta: number) {
   alpha = newAlpha;
   beta = newBeta;
+}
+
+export function setSimulationSizeDelta(newSizeDelta: number) {
+  sizeDelta = newSizeDelta;
 }
 
 export function setSimulationMaxBeeCnt(newMaxBeeCnt: number) {
@@ -787,8 +834,8 @@ function buildWidthGraph() {
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
       const z = getZ(bee.pos);
-      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - Bee.beeRadius);
-      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + Bee.beeRadius);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - bee.beeRadius);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + bee.beeRadius);
     }
   });
 
@@ -821,8 +868,8 @@ function buildAreaGraph() {
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
       const z = getZ(bee.pos);
-      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - Bee.beeRadius);
-      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + Bee.beeRadius);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - bee.beeRadius);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + bee.beeRadius);
     }
   });
 
@@ -858,13 +905,13 @@ function buildDensityGraph() {
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
       const z = getZ(bee.pos);
-      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - Bee.beeRadius);
-      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + Bee.beeRadius);
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - bee.beeRadius);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + bee.beeRadius);
       countGraph[z]++;
     }
   });
 
-  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.nodeRadius, 3);
+  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.baseNodeRadius, 3);
 
   for (let i = 0; i < maxIdx; i++) {
     if (maxRGraph[i] === 0) continue;
@@ -910,7 +957,7 @@ function buildWeightGraph() {
     }
   });
 
-  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.nodeRadius, 3);
+  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.baseNodeRadius, 3);
 
   for (let i = 0; i < maxIdx; i++) {
     const layerMass = Math.PI * beeMass * Math.pow(countGraph[i], 2);

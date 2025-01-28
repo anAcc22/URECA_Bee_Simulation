@@ -12,6 +12,8 @@ interface Props {
   setAlpha: React.Dispatch<React.SetStateAction<number>>;
   beta: number;
   setBeta: React.Dispatch<React.SetStateAction<number>>;
+  sizeDelta: number;
+  setSizeDelta: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export function ControlPanel({
@@ -26,6 +28,8 @@ export function ControlPanel({
   setAlpha,
   beta,
   setBeta,
+  sizeDelta,
+  setSizeDelta,
 }: Props) {
   return (
     <>
@@ -138,6 +142,41 @@ export function ControlPanel({
             </button>
           </div>
         </div>
+
+        <div className="flex justify-between">
+          <div>
+            <span className="text-md font-semibold">Size Delta: </span>
+            <span>{sizeDelta}</span>
+          </div>
+          <div className="flex gap-1 font-semibold">
+            <button
+              className="bg-gray-400 text-white w-6 rounded-full
+                hover:bg-gray-300 active:bg-amber-300"
+              onClick={() => {
+                const newVal =
+                  Math.round(100 * Math.max(0.0, sizeDelta - 0.05)) / 100;
+                setSizeDelta(newVal);
+                localStorage.setItem("sizeDelta", newVal.toString());
+              }}
+            >
+              −
+            </button>
+            <button
+              className="bg-gray-400 text-white w-6 rounded-full
+                hover:bg-gray-300 active:bg-amber-300"
+              onClick={() => {
+                const newVal =
+                  Math.round(100 * Math.min(0.5, sizeDelta + 0.05)) / 100;
+                setSizeDelta(newVal);
+                localStorage.setItem("sizeDelta", newVal.toString());
+              }}
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <hr className="border-dashed border-gray-200" />
 
         <div className="flex justify-between">
           <div>

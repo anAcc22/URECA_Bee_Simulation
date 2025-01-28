@@ -9,7 +9,7 @@ import {
   setSimulationAlphaBeta,
   setSimulationMaxBeeCnt,
 } from "./simulation";
-import { setSimulationSizeDelta } from "./simulation";
+import { setSimulationSizeDelta, setSimulationMassDelta } from "./simulation";
 import { initSimulation } from "./simulation";
 import { updateSetBeeCnt } from "./simulation";
 
@@ -36,6 +36,7 @@ interface Props {
   alpha: number;
   beta: number;
   sizeDelta: number;
+  massDelta: number;
   setWidthGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setAreaGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setDensityGraph: React.Dispatch<React.SetStateAction<GraphData>>;
@@ -51,6 +52,7 @@ export function Simulation({
   alpha,
   beta,
   sizeDelta,
+  massDelta,
   setWidthGraph,
   setAreaGraph,
   setDensityGraph,
@@ -105,6 +107,7 @@ export function Simulation({
   useEffect(() => setShowBodyOnly(showBodyOnly), [showBodyOnly]);
   useEffect(() => setSimulationAlphaBeta(alpha, beta), [alpha, beta]);
   useEffect(() => setSimulationSizeDelta(sizeDelta), [sizeDelta]);
+  useEffect(() => setSimulationMassDelta(massDelta), [massDelta]);
   useEffect(() => setSimulationMaxBeeCnt(maxBeeCnt), [maxBeeCnt]);
 
   return (

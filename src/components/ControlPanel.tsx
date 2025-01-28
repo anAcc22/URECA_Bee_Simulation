@@ -14,6 +14,8 @@ interface Props {
   setBeta: React.Dispatch<React.SetStateAction<number>>;
   sizeDelta: number;
   setSizeDelta: React.Dispatch<React.SetStateAction<number>>;
+  massDelta: number;
+  setMassDelta: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export function ControlPanel({
@@ -30,6 +32,8 @@ export function ControlPanel({
   setBeta,
   sizeDelta,
   setSizeDelta,
+  massDelta,
+  setMassDelta,
 }: Props) {
   return (
     <>
@@ -79,8 +83,6 @@ export function ControlPanel({
           </button>
         </div>
 
-        <hr className="border-dashed border-gray-200" />
-
         <div className="flex justify-between">
           <div>
             <span className="text-md font-semibold">Crawl Rate: </span>
@@ -88,8 +90,8 @@ export function ControlPanel({
           </div>
           <div className="flex gap-1 font-semibold">
             <button
-              className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-amber-300"
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.max(0.0, alpha - 0.1)) / 10;
                 setAlpha(newVal);
@@ -99,8 +101,8 @@ export function ControlPanel({
               −
             </button>
             <button
-              className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-amber-300"
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.min(1.0, alpha + 0.1)) / 10;
                 setAlpha(newVal);
@@ -119,8 +121,8 @@ export function ControlPanel({
           </div>
           <div className="flex gap-1 font-semibold">
             <button
-              className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-amber-300"
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.max(0.0, beta - 0.1)) / 10;
                 setBeta(newVal);
@@ -130,8 +132,8 @@ export function ControlPanel({
               −
             </button>
             <button
-              className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-amber-300"
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
               onClick={() => {
                 const newVal = Math.round(10 * Math.min(1.0, beta + 0.1)) / 10;
                 setBeta(newVal);
@@ -150,8 +152,8 @@ export function ControlPanel({
           </div>
           <div className="flex gap-1 font-semibold">
             <button
-              className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-amber-300"
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
               onClick={() => {
                 const newVal =
                   Math.round(100 * Math.max(0.0, sizeDelta - 0.05)) / 100;
@@ -162,8 +164,8 @@ export function ControlPanel({
               −
             </button>
             <button
-              className="bg-gray-400 text-white w-6 rounded-full
-                hover:bg-gray-300 active:bg-amber-300"
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
               onClick={() => {
                 const newVal =
                   Math.round(100 * Math.min(0.5, sizeDelta + 0.05)) / 100;
@@ -176,7 +178,38 @@ export function ControlPanel({
           </div>
         </div>
 
-        <hr className="border-dashed border-gray-200" />
+        <div className="flex justify-between">
+          <div>
+            <span className="text-md font-semibold">Mass Delta: </span>
+            <span>{massDelta}</span>
+          </div>
+          <div className="flex gap-1 font-semibold">
+            <button
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
+              onClick={() => {
+                const newVal =
+                  Math.round(100 * Math.max(0.0, massDelta - 0.05)) / 100;
+                setMassDelta(newVal);
+                localStorage.setItem("massDelta", newVal.toString());
+              }}
+            >
+              −
+            </button>
+            <button
+              className="bg-gray-500 text-white w-6 rounded-full
+                hover:bg-gray-400 active:bg-amber-300"
+              onClick={() => {
+                const newVal =
+                  Math.round(100 * Math.min(0.5, massDelta + 0.05)) / 100;
+                setMassDelta(newVal);
+                localStorage.setItem("massDelta", newVal.toString());
+              }}
+            >
+              +
+            </button>
+          </div>
+        </div>
 
         <div className="flex justify-between">
           <div>
@@ -190,8 +223,8 @@ export function ControlPanel({
             ></textarea>
           </div>
           <button
-            className="bg-gray-400 text-white w-12 rounded-full
-              hover:bg-gray-300 active:bg-amber-300 font-semibold"
+            className="bg-gray-500 text-white w-12 rounded-full
+              hover:bg-gray-400 active:bg-amber-300 font-semibold"
             onClick={() => {
               const newVal = (
                 document.getElementById("textMaxBeeCnt") as HTMLTextAreaElement
@@ -205,8 +238,6 @@ export function ControlPanel({
             SET
           </button>
         </div>
-
-        <hr className="border-dashed border-gray-200" />
 
         <div className="flex justify-between">
           <div className="font-semibold">Bee Count</div>

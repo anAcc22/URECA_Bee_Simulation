@@ -250,8 +250,10 @@ class Bee {
   static readonly flyTowardsQueenChance = 0.1;
 
   static readonly queenChance = 0.02;
-  static readonly grav = 0.04;
+  static readonly baseGrav = 0.04;
   static readonly k = 0.02;
+
+  grav: number;
 
   aerialState: "hover" | "attached" = "hover";
 
@@ -271,10 +273,14 @@ class Bee {
   constructor(id: number, x: number, y: number, vx: number, vy: number) {
     this.id = id;
 
-    const ratio = getRandomRatio(sizeDelta);
+    const sizeRatio = getRandomRatio(sizeDelta);
 
-    this.nodeRadius = ratio * Bee.baseNodeRadius;
-    this.beeRadius = ratio * Bee.baseBeeRadius;
+    this.nodeRadius = sizeRatio * Bee.baseNodeRadius;
+    this.beeRadius = sizeRatio * Bee.baseBeeRadius;
+
+    const massRatio = getRandomRatio(massDelta);
+
+    this.grav = massRatio * Bee.baseGrav;
 
     this.pos = { x, y };
     this.vel = { x: vx, y: vy };
@@ -363,10 +369,12 @@ class Bee {
         ctx.fillStyle = `hsla(${60 - this.collisionHeat}, 40%, 60%, 1)`;
       }
     } else {
+      const massRatio = this.grav / Bee.baseGrav;
+      const shade = 1.0 - (massRatio - 0.5);
       if (this.supportSet.length === 0) {
-        ctx.fillStyle = `hsla(35, 60%, 55%, 1)`;
+        ctx.fillStyle = `hsla(35, 60%, ${15 + 75 * shade}%, 1)`;
       } else {
-        ctx.fillStyle = `hsla(50, 60%, 55%, 1)`;
+        ctx.fillStyle = `hsla(60, 60%, ${15 + 75 * shade}%, 1)`;
       }
     }
 
@@ -455,7 +463,7 @@ class Bee {
   }
 
   resolveAttachedVelocity() {
-    const a: Vector2D = { x: 0, y: -Bee.grav };
+    const a: Vector2D = { x: 0, y: -this.grav };
 
     if (this.supportSet.length === 0 && !this.isAttachedToBoard()) {
       const toDetach = booleanChance(Bee.detachChance);
@@ -539,7 +547,8 @@ class Bee {
     for (const i of this.supportSet) {
       const d = unitDiff(this.pos, bees.get(i as number)!.pos);
       const dist = bees.get(i as number)!.beeRadius + this.beeRadius;
-      let m = dist;
+      const massRatio = bees.get(i as number)!.grav / Bee.baseGrav;
+      let m = dist * massRatio;
       m -= euclidDist(bees.get(i as number)!.pos, this.pos);
       m = clamp(m, 0, dist);
       if (!this.isAttachedToBoard()) {
@@ -550,11 +559,14 @@ class Bee {
       }
     }
 
+    const massRatio = this.grav / Bee.baseGrav;
+    const massRatioAdj = 0.7 + 0.3 * (1.0 - (massRatio - 0.5));
+
     for (const i of this.attachSet) {
       if ((i as Vector2D).x === undefined) {
         const d = unitDiff(this.pos, bees.get(i as number)!.pos);
         const dist = bees.get(i as number)!.beeRadius + this.beeRadius;
-        let m = dist;
+        let m = dist * massRatioAdj;
         m -= euclidDist(bees.get(i as number)!.pos, this.pos);
         m = clamp(m, 0, dist);
         a.x += Bee.k * m * d.x;
@@ -562,7 +574,7 @@ class Bee {
       } else {
         const v = i as Vector2D;
         const d = unitDiff(this.pos, v);
-        let m = this.beeRadius;
+        let m = this.beeRadius * massRatioAdj;
         m -= euclidDist(v, this.pos);
         m = clamp(m, 0, this.beeRadius);
         a.x += Bee.k * m * d.x;
@@ -688,7 +700,7 @@ let alpha = 0.0;
 let beta = 0.0;
 
 let sizeDelta = 0.0;
-// let massDelta = 0.0;
+let massDelta = 0.0;
 
 let simulationStatus: Status = "reset";
 
@@ -755,6 +767,10 @@ export function setSimulationAlphaBeta(newAlpha: number, newBeta: number) {
 
 export function setSimulationSizeDelta(newSizeDelta: number) {
   sizeDelta = newSizeDelta;
+}
+
+export function setSimulationMassDelta(newMassDelta: number) {
+  massDelta = newMassDelta;
 }
 
 export function setSimulationMaxBeeCnt(newMaxBeeCnt: number) {
@@ -962,7 +978,7 @@ function buildWeightGraph() {
   for (let i = 0; i < maxIdx; i++) {
     const layerMass = Math.PI * beeMass * Math.pow(countGraph[i], 2);
     m[i] = layerMass / Z_INTERVAL;
-    w[i] = layerMass * Bee.grav;
+    w[i] = layerMass * Bee.baseGrav;
   }
 
   for (let i = maxIdx - 2; i >= 0; i--) {

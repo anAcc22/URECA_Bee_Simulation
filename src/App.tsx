@@ -44,6 +44,11 @@ export default function App() {
       ? Number.parseFloat(localStorage.getItem("sizeDelta")!)
       : 0.0,
   );
+  const [massDelta, setMassDelta] = useState<number>(
+    localStorage.getItem("massDelta")
+      ? Number.parseFloat(localStorage.getItem("massDelta")!)
+      : 0.0,
+  );
 
   const [widthGraph, setWidthGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
   const [areaGraph, setAreaGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
@@ -76,6 +81,8 @@ export default function App() {
         setBeta={setBeta}
         sizeDelta={sizeDelta}
         setSizeDelta={setSizeDelta}
+        massDelta={massDelta}
+        setMassDelta={setMassDelta}
       ></ControlPanel>
       <Simulation
         status={status}
@@ -85,6 +92,7 @@ export default function App() {
         alpha={alpha}
         beta={beta}
         sizeDelta={sizeDelta}
+        massDelta={massDelta}
         setWidthGraph={setWidthGraph}
         setAreaGraph={setAreaGraph}
         setDensityGraph={setDensityGraph}

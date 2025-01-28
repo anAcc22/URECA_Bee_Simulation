@@ -34,7 +34,7 @@ interface Props {
   setSizeDelta: React.Dispatch<React.SetStateAction<number>>;
   massDelta: number;
   setMassDelta: React.Dispatch<React.SetStateAction<number>>;
-  graphsOverall: React.Dispatch<React.SetStateAction<GraphsOverall>>;
+  graphsOverall: GraphsOverall;
 }
 
 export function ControlPanel({

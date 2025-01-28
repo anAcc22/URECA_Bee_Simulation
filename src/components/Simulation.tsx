@@ -19,6 +19,8 @@ import { updateSetDensityGraph } from "./simulation";
 import { updateSetWeightGraph } from "./simulation";
 import { updateSetAttachmentGraph } from "./simulation";
 
+import { updateSetGraphsOverall } from "./simulation";
+
 import { setShowBodyOnly } from "./simulation";
 
 interface DataPoint {
@@ -27,6 +29,16 @@ interface DataPoint {
 }
 
 type GraphData = DataPoint[];
+
+type Graphs = GraphData[];
+
+interface GraphsOverall {
+  widthGraphs: Graphs;
+  areaGraphs: Graphs;
+  densityGraphs: Graphs;
+  weightGraphs: Graphs;
+  attachmentGraphs: Graphs;
+}
 
 interface Props {
   setImageLink: React.Dispatch<React.SetStateAction<string>>;
@@ -43,6 +55,7 @@ interface Props {
   setDensityGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setWeightGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setAttachmentGraph: React.Dispatch<React.SetStateAction<GraphData>>;
+  setGraphsOverall: React.Dispatch<React.SetStateAction<GraphsOverall>>;
 }
 
 export function Simulation({
@@ -60,6 +73,7 @@ export function Simulation({
   setDensityGraph,
   setWeightGraph,
   setAttachmentGraph,
+  setGraphsOverall,
 }: Props) {
   let ref = useRef<HTMLCanvasElement>(null);
 
@@ -100,6 +114,7 @@ export function Simulation({
     updateSetDensityGraph(setDensityGraph);
     updateSetWeightGraph(setWeightGraph);
     updateSetAttachmentGraph(setAttachmentGraph);
+    updateSetGraphsOverall(setGraphsOverall);
 
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);

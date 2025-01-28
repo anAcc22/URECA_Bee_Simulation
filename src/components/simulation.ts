@@ -9,6 +9,16 @@ interface DataPoint {
 
 type GraphData = DataPoint[];
 
+type Graphs = GraphData[];
+
+interface GraphsOverall {
+  widthGraphs: Graphs;
+  areaGraphs: Graphs;
+  densityGraphs: Graphs;
+  weightGraphs: Graphs;
+  attachmentGraphs: Graphs;
+}
+
 interface Vector2D {
   x: number;
   y: number;
@@ -714,6 +724,14 @@ const collisionGrid = new CollisionGrid();
 
 const Z_INTERVAL = 30;
 
+const ENSEMBLE_COUNT = 5;
+
+let widthGraphs: Graphs = [];
+let areaGraphs: Graphs = [];
+let densityGraphs: Graphs = [];
+let weightGraphs: Graphs = [];
+let attachmentGraphs: Graphs = [];
+
 let graphIdx = 0;
 
 let frames = 0;
@@ -827,6 +845,22 @@ export function updateSetAttachmentGraph(
 ) {
   setAttachmentGraph = _;
 }
+
+let setGraphsOverall: React.Dispatch<React.SetStateAction<GraphsOverall>>;
+
+export function updateSetGraphsOverall(
+  _: React.Dispatch<React.SetStateAction<GraphsOverall>>,
+) {
+  setGraphsOverall = _;
+}
+
+let graphsOverall: GraphsOverall = {
+  widthGraphs: [],
+  areaGraphs: [],
+  densityGraphs: [],
+  weightGraphs: [],
+  attachmentGraphs: [],
+};
 
 function getZ(pos: Vector2D) {
   return Math.floor((pos.y - rod.rodBound) / Z_INTERVAL);
@@ -1057,20 +1091,46 @@ export function initSimulation(
           if (graphIdx % graphs == 0) {
             const widthGraph = buildWidthGraph();
             setWidthGraph(widthGraph);
+            widthGraphs.push(widthGraph);
+            if (widthGraphs.length > ENSEMBLE_COUNT) {
+              widthGraphs.shift();
+            }
+            graphsOverall["widthGraphs"] = widthGraphs;
           } else if (graphIdx % graphs == 1) {
             const areaGraph = buildAreaGraph();
             setAreaGraph(areaGraph);
+            areaGraphs.push(areaGraph);
+            if (areaGraphs.length > ENSEMBLE_COUNT) {
+              areaGraphs.shift();
+            }
+            graphsOverall["areaGraphs"] = areaGraphs;
           } else if (graphIdx % graphs == 2) {
             const densityGraph = buildDensityGraph();
             setDensityGraph(densityGraph);
+            densityGraphs.push(densityGraph);
+            if (densityGraphs.length > ENSEMBLE_COUNT) {
+              densityGraphs.shift();
+            }
+            graphsOverall["densityGraphs"] = densityGraphs;
           } else if (graphIdx % graphs == 3) {
             const weightGraph = buildWeightGraph();
             setWeightGraph(weightGraph);
+            weightGraphs.push(weightGraph);
+            if (weightGraphs.length > ENSEMBLE_COUNT) {
+              weightGraphs.shift();
+            }
+            graphsOverall["weightGraphs"] = weightGraphs;
           } else {
             const attachmentGraph = buildAttachmentGraph();
             setAttachmentGraph(attachmentGraph);
+            attachmentGraphs.push(attachmentGraph);
+            if (attachmentGraphs.length > ENSEMBLE_COUNT) {
+              attachmentGraphs.shift();
+            }
+            graphsOverall["attachmentGraphs"] = attachmentGraphs;
           }
           graphIdx++;
+          setGraphsOverall(graphsOverall);
           setImageLink(canvas.toDataURL("image/png"));
         }
 

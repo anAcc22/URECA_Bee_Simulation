@@ -1,5 +1,22 @@
 import { Status } from "../types";
 
+interface DataPoint {
+  x: number;
+  y: number;
+}
+
+type GraphData = DataPoint[];
+
+type Graphs = GraphData[];
+
+interface GraphsOverall {
+  widthGraphs: Graphs;
+  areaGraphs: Graphs;
+  densityGraphs: Graphs;
+  weightGraphs: Graphs;
+  attachmentGraphs: Graphs;
+}
+
 interface Props {
   imageLink: string;
   status: Status;
@@ -17,6 +34,7 @@ interface Props {
   setSizeDelta: React.Dispatch<React.SetStateAction<number>>;
   massDelta: number;
   setMassDelta: React.Dispatch<React.SetStateAction<number>>;
+  graphsOverall: React.Dispatch<React.SetStateAction<GraphsOverall>>;
 }
 
 export function ControlPanel({
@@ -36,6 +54,7 @@ export function ControlPanel({
   setSizeDelta,
   massDelta,
   setMassDelta,
+  graphsOverall,
 }: Props) {
   return (
     <>
@@ -276,15 +295,21 @@ export function ControlPanel({
         </div>
 
         <div className="flex justify-between">
-          <a className="hover:cursor-pointer text-amber-700 rounded-full">
-            Download Data
+          <a
+            href={`data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(graphsOverall))}`}
+            download={`crawl_${alpha}_climb_${beta}_size_${sizeDelta}_mass_${massDelta}_cnt_${beeCnt}.json`}
+            className="hover:cursor-pointer text-amber-700 hover:text-amber-600
+              rounded-full"
+          >
+            Data (JSON)
           </a>
           <a
             download="screenshot.png"
             href={imageLink}
-            className="hover:cursor-pointer text-amber-700 rounded-full"
+            className="hover:cursor-pointer text-amber-700 hover:text-amber-600
+              rounded-full"
           >
-            Save (PNG)
+            Image (PNG)
           </a>
         </div>
       </div>

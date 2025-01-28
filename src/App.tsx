@@ -11,6 +11,16 @@ interface DataPoint {
 
 type GraphData = DataPoint[];
 
+type Graphs = GraphData[];
+
+interface GraphsOverall {
+  widthGraphs: Graphs;
+  areaGraphs: Graphs;
+  densityGraphs: Graphs;
+  weightGraphs: Graphs;
+  attachmentGraphs: Graphs;
+}
+
 export default function App() {
   const [status, setStatus] = useState<Status>("reset");
   const [beeCnt, setBeeCnt] = useState<number>(0);
@@ -60,6 +70,14 @@ export default function App() {
     { x: 0, y: 0 },
   ]);
 
+  const [graphsOverall, setGraphsOverall] = useState<GraphsOverall>({
+    widthGraphs: [],
+    areaGraphs: [],
+    densityGraphs: [],
+    weightGraphs: [],
+    attachmentGraphs: [],
+  });
+
   return (
     <>
       <Graphs
@@ -86,6 +104,7 @@ export default function App() {
         setSizeDelta={setSizeDelta}
         massDelta={massDelta}
         setMassDelta={setMassDelta}
+        graphsOverall={graphsOverall}
       ></ControlPanel>
       <Simulation
         setImageLink={setImageLink}
@@ -102,6 +121,7 @@ export default function App() {
         setDensityGraph={setDensityGraph}
         setWeightGraph={setWeightGraph}
         setAttachmentGraph={setAttachmentGraph}
+        setGraphsOverall={setGraphsOverall}
       ></Simulation>
     </>
   );

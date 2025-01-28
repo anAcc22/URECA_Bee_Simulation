@@ -724,7 +724,7 @@ const collisionGrid = new CollisionGrid();
 
 const Z_INTERVAL = 30;
 
-const ENSEMBLE_COUNT = 5;
+const ENSEMBLE_COUNT = 10;
 
 let widthGraphs: Graphs = [];
 let areaGraphs: Graphs = [];

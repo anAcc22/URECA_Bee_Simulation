@@ -304,7 +304,7 @@ export function ControlPanel({
             Data (JSON)
           </a>
           <a
-            download="screenshot.png"
+            download={`crawl_${alpha}_climb_${beta}_size_${sizeDelta}_mass_${massDelta}_cnt_${beeCnt}.png`}
             href={imageLink}
             className="hover:cursor-pointer text-amber-700 hover:text-amber-600
               rounded-full"

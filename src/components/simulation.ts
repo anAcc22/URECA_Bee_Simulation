@@ -363,7 +363,7 @@ class Bee {
 
     for (const id of ids) {
       const dist = bees.get(id)!.beeRadius + this.beeRadius;
-      if (euclidDist(this.pos, bees.get(id)!.pos) <= dist) {
+      if (euclidDist(this.pos, bees.get(id)!.pos) <= dist + 2.5) {
         ans.push(id);
       }
     }
@@ -520,7 +520,7 @@ class Bee {
         const dist = bees.get(i)!.beeRadius + this.beeRadius;
         if (
           this.pos.y > bees.get(i)!.pos.y + 1.0 &&
-          euclidDist(this.pos, bees.get(i)!.pos) <= dist + 7.5 &&
+          euclidDist(this.pos, bees.get(i)!.pos) <= dist + 10.0 &&
           bees.get(i)!.aerialState === "attached"
         ) {
           candidates.push([i, euclidDist(this.pos, bees.get(i)!.pos)]);
@@ -529,10 +529,8 @@ class Bee {
     }
 
     candidates.sort((x, y) => {
-      if (x[1] <= this.beeRadius / 2 || (x[0] as Vector2D).x !== undefined)
-        return -1;
-      if (y[1] <= this.beeRadius / 2 || (y[0] as Vector2D).x !== undefined)
-        return 1;
+      if (x[1] == 0) return -1;
+      if (y[1] == 0) return 1;
       return x[1] - y[1];
     });
 
@@ -778,6 +776,9 @@ export function setSimulationStatus(newStatus: Status) {
     curCnt = 0;
     graphIdx = 0;
     setBeeCnt(curCnt);
+  }
+  if (simulationStatus === "reset") {
+    queenCovered = false;
   }
 }
 
@@ -1178,7 +1179,7 @@ export function initSimulation(
 
           curCnt++;
           setBeeCnt(curCnt);
-          if (curCnt == 30) queenCovered = true;
+          if (curCnt == 60) queenCovered = true;
         }
       }
     }, 1000 / FPS);

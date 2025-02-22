@@ -1,0 +1,20 @@
+# Fdb version 4
+["pdflatex"] 1738243737.26463 "main.tex" "main.pdf" "main" 1738243737.49187 0
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb" 1736268207 30251 6afa5cb1d0204815a708a080681d4674 ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb" 1736268207 36299 5f9df58c2139e7edcf37c8fca4bd384d ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb" 1736268207 36281 c355509802a035cadc5f15869451dcee ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1736268207 35752 024fb6c41858982481f6968b5fc26508 ""
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1736268207 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
+  "/usr/share/texmf-dist/tex/latex/base/article.cls" 1736268207 20144 147463a6a579f4597269ef9565205cfe ""
+  "/usr/share/texmf-dist/tex/latex/base/size10.clo" 1736268207 8448 dbc0dbf4156c0bb9ba01a1c685d3bad0 ""
+  "/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1736268207 30006 3d512c0edd558928ddea1690180ef77e ""
+  "/usr/share/texmf-dist/web2c/texmf.cnf" 1736268207 41588 b43d3e860a4f94167ee1e725ff526a72 ""
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1738243576.37479 5318467 8236939515598d005dfbcc2e1a40f206 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1738243513 7112999 d2c3790598c272685ac23ca1546d3308 ""
+  "main.aux" 1738243737.4761 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "main.tex" 1738243736.68276 129 8c0eb7397bdf3d2d58fdf5b42ecc8c91 ""
+  (generated)
+  "main.aux"
+  "main.log"
+  "main.pdf"
+  (rewritten before read)

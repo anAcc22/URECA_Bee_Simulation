@@ -249,6 +249,8 @@ class Bee {
   vel: Vector2D;
   det: Vector2D;
 
+  isQueen: boolean;
+
   static readonly baseNodeRadius = 5;
   static readonly baseBeeRadius = 15;
   static readonly beeLegs = 2;
@@ -280,10 +282,19 @@ class Bee {
   readonly xtimeStep = clamp(Math.random(), 0.1, 0.5);
   readonly ytimeStep = clamp(Math.random(), 0.1, 0.5);
 
-  constructor(id: number, x: number, y: number, vx: number, vy: number) {
+  constructor(
+    id: number,
+    x: number,
+    y: number,
+    vx: number,
+    vy: number,
+    isQueen: boolean,
+  ) {
+    this.isQueen = isQueen;
     this.id = id;
 
-    const sizeRatio = getRandomRatio(sizeDelta);
+    let sizeRatio = getRandomRatio(sizeDelta);
+    if (this.isQueen) sizeRatio = 1.75;
 
     this.nodeRadius = sizeRatio * Bee.baseNodeRadius;
     this.beeRadius = sizeRatio * Bee.baseBeeRadius;
@@ -372,6 +383,20 @@ class Bee {
   }
 
   drawNode() {
+    if (this.isQueen) {
+      ctx.fillStyle = `hsla(20, 60%, ${Math.abs(Math.sin(performance.now() / 500)) * 30 + 20}%, 1)`;
+      ctx.beginPath();
+      ctx.arc(
+        this.pos.x,
+        this.pos.y,
+        (4 / 5) * this.nodeRadius,
+        0,
+        2 * Math.PI,
+      );
+      ctx.fill();
+      return;
+    }
+
     if (this.attachSet.length === 0) {
       if (this.cooldown) {
         ctx.fillStyle = `hsla(${95 + this.cooldown}, 40%, 60%, 1)`;
@@ -655,6 +680,15 @@ class Bee {
   }
 
   update() {
+    if (this.isQueen) {
+      this.pos = {
+        x: canvasWidth / 2,
+        y: canvasHeight / 3,
+      };
+      this.aerialState = "attached";
+      return;
+    }
+
     if (this.aerialState === "hover") {
       this.resolveHoverVelocity();
     } else {
@@ -738,20 +772,6 @@ let curCnt = 0;
 let beeCnt = 300;
 
 let bees = new Map<number, Bee>(); // NOTE: (id (unique): number) -> (bee: Bee)
-
-function drawQueenIndicator() {
-  let t = performance.now();
-  ctx.fillStyle = `hsla(20, 60%, ${Math.abs(Math.sin(t / 500)) * 30 + 20}%, 1)`;
-  ctx.beginPath();
-  ctx.arc(
-    canvasWidth / 2,
-    canvasHeight / 3,
-    Bee.baseNodeRadius,
-    0,
-    2 * Math.PI,
-  );
-  ctx.fill();
-}
 
 export function resizeSimulation(width: number, height: number) {
   canvasWidth = width;
@@ -1081,11 +1101,18 @@ export function initSimulation(
       }
       bees.forEach((bee: Bee, _id: number) => bee.drawNode());
 
-      drawQueenIndicator();
-
       if (simulationStatus === "start") {
         bees.forEach((bee: Bee, _id: number) => bee.update());
         collisionGrid.build();
+
+        if (curCnt === 0) {
+          bees.set(
+            curCnt,
+            new Bee(curCnt, canvasWidth / 2, canvasHeight / 3, 0, 0, true),
+          );
+          curCnt++;
+          setBeeCnt(curCnt);
+        }
 
         if (frames % 60 === 0) {
           const graphs = 5;
@@ -1175,7 +1202,7 @@ export function initSimulation(
             }
           }
 
-          bees.set(curCnt, new Bee(curCnt, x, y, dx, dy));
+          bees.set(curCnt, new Bee(curCnt, x, y, dx, dy, false));
 
           curCnt++;
           setBeeCnt(curCnt);

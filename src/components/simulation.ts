@@ -13,7 +13,6 @@ type Graphs = GraphData[];
 
 interface GraphsOverall {
   widthGraphs: Graphs;
-  areaGraphs: Graphs;
   densityGraphs: Graphs;
   weightGraphs: Graphs;
   attachmentGraphs: Graphs;
@@ -355,6 +354,8 @@ class Bee {
 
     const ids = new Set<number>();
 
+    ids.add(0);
+
     for (let d = 0; d < CollisionGrid.dirCnt; d++) {
       const nx = xc + CollisionGrid.dx[d];
       const ny = yc + CollisionGrid.dy[d];
@@ -374,7 +375,7 @@ class Bee {
 
     for (const id of ids) {
       const dist = bees.get(id)!.beeRadius + this.beeRadius;
-      if (euclidDist(this.pos, bees.get(id)!.pos) <= dist + 2.5) {
+      if (euclidDist(this.pos, bees.get(id)!.pos) <= dist + 2.0) {
         ans.push(id);
       }
     }
@@ -544,7 +545,7 @@ class Bee {
       for (const i of otherBees) {
         const dist = bees.get(i)!.beeRadius + this.beeRadius;
         if (
-          this.pos.y > bees.get(i)!.pos.y + 1.0 &&
+          this.pos.y > bees.get(i)!.pos.y + 2.5 &&
           euclidDist(this.pos, bees.get(i)!.pos) <= dist + 10.0 &&
           bees.get(i)!.aerialState === "attached"
         ) {
@@ -685,6 +686,7 @@ class Bee {
         x: canvasWidth / 2,
         y: canvasHeight / 3,
       };
+      this.attachSet = [this.pos];
       this.aerialState = "attached";
       return;
     }
@@ -759,7 +761,6 @@ const Z_INTERVAL = 30;
 const ENSEMBLE_COUNT = 10;
 
 let widthGraphs: Graphs = [];
-let areaGraphs: Graphs = [];
 let densityGraphs: Graphs = [];
 let weightGraphs: Graphs = [];
 let attachmentGraphs: Graphs = [];
@@ -835,14 +836,6 @@ export function updateSetWidthGraph(
   setWidthGraph = _;
 }
 
-let setAreaGraph: React.Dispatch<React.SetStateAction<GraphData>>;
-
-export function updateSetAreaGraph(
-  _: React.Dispatch<React.SetStateAction<GraphData>>,
-) {
-  setAreaGraph = _;
-}
-
 let setDensityGraph: React.Dispatch<React.SetStateAction<GraphData>>;
 
 export function updateSetDensityGraph(
@@ -877,7 +870,6 @@ export function updateSetGraphsOverall(
 
 let graphsOverall: GraphsOverall = {
   widthGraphs: [],
-  areaGraphs: [],
   densityGraphs: [],
   weightGraphs: [],
   attachmentGraphs: [],
@@ -921,46 +913,11 @@ function buildWidthGraph() {
   return widthGraph;
 }
 
-function buildAreaGraph() {
-  let areaGraph: GraphData = new Array<DataPoint>();
-  let minLGraph = new Array<number>();
-  let maxRGraph = new Array<number>();
-  let maxIdx = 1;
-
-  bees.forEach((bee: Bee, _id: number) => {
-    if (bee.aerialState === "attached") {
-      maxIdx = Math.max(maxIdx, getZ(bee.pos) + 2);
-    }
-  });
-
-  for (let i = 0; i < maxIdx; i++) {
-    areaGraph.push({ x: (Z_INTERVAL * i) / 1000, y: 0 });
-    minLGraph.push(canvasWidth);
-    maxRGraph.push(0);
-  }
-
-  bees.forEach((bee: Bee, _id: number) => {
-    if (bee.aerialState === "attached") {
-      const z = getZ(bee.pos);
-      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - bee.beeRadius);
-      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + bee.beeRadius);
-    }
-  });
-
-  for (let i = 0; i < maxIdx; i++) {
-    if (maxRGraph[i] === 0) continue;
-    areaGraph[i].y = (maxRGraph[i] - minLGraph[i]) / 2000;
-    areaGraph[i].y = Math.PI * Math.pow(areaGraph[i].y, 2);
-  }
-
-  return areaGraph;
-}
-
 function buildDensityGraph() {
   let densityGraph: GraphData = new Array<DataPoint>();
   let minLGraph = new Array<number>();
   let maxRGraph = new Array<number>();
-  let countGraph = new Array<number>();
+  let weightGraph = new Array<number>();
   let maxIdx = 1;
 
   bees.forEach((bee: Bee, _id: number) => {
@@ -973,7 +930,7 @@ function buildDensityGraph() {
     densityGraph.push({ x: (Z_INTERVAL * i) / 1000, y: 0 });
     minLGraph.push(canvasWidth);
     maxRGraph.push(0);
-    countGraph.push(0);
+    weightGraph.push(0);
   }
 
   bees.forEach((bee: Bee, _id: number) => {
@@ -981,21 +938,15 @@ function buildDensityGraph() {
       const z = getZ(bee.pos);
       minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - bee.beeRadius);
       maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + bee.beeRadius);
-      countGraph[z]++;
+      weightGraph[z] += bee.grav;
     }
   });
 
-  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.baseNodeRadius, 3);
-
   for (let i = 0; i < maxIdx; i++) {
     if (maxRGraph[i] === 0) continue;
-    const r = (maxRGraph[i] - minLGraph[i]) / 2;
-    const area = Math.PI * Math.pow(r, 2);
-    const vol = area * Z_INTERVAL;
-    if (vol !== 0) {
-      densityGraph[i].y =
-        (Math.PI * beeMass * Math.pow(countGraph[i], 2)) / vol;
-    }
+    const area =
+      (Z_INTERVAL * (maxRGraph[i] - minLGraph[i])) / Math.pow(1000, 2);
+    densityGraph[i].y = weightGraph[i] / area;
   }
 
   return densityGraph;
@@ -1003,11 +954,11 @@ function buildDensityGraph() {
 
 function buildWeightGraph() {
   let weightGraph: GraphData = new Array<DataPoint>();
+  let minLGraph = new Array<number>();
+  let maxRGraph = new Array<number>();
 
-  let countGraph = new Array<number>();
-
-  let m = new Array<number>();
-  let w = new Array<number>();
+  let wGraph = new Array<number>();
+  let mGraph = new Array<number>();
 
   let maxIdx = 0;
 
@@ -1018,41 +969,41 @@ function buildWeightGraph() {
   });
 
   for (let i = 0; i < maxIdx; i++) {
-    weightGraph.push({ x: 1, y: 1 });
-    countGraph.push(0);
-    m.push(0);
-    w.push(0);
+    weightGraph.push({ x: 0, y: 0 });
+    minLGraph.push(canvasWidth);
+    maxRGraph.push(0);
+    wGraph.push(0);
+    mGraph.push(0);
   }
 
   bees.forEach((bee: Bee, _id: number) => {
     if (bee.aerialState === "attached") {
       const z = getZ(bee.pos);
-      countGraph[z]++;
+      minLGraph[z] = Math.min(minLGraph[z], bee.pos.x - bee.beeRadius);
+      maxRGraph[z] = Math.max(maxRGraph[z], bee.pos.x + bee.beeRadius);
+      wGraph[z] += bee.grav;
+      mGraph[z] += bee.grav;
     }
   });
 
-  const beeMass = (4 / 3) * Math.PI * Math.pow(Bee.baseNodeRadius, 3);
-
-  for (let i = 0; i < maxIdx; i++) {
-    const layerMass = Math.PI * beeMass * Math.pow(countGraph[i], 2);
-    m[i] = layerMass / Z_INTERVAL;
-    w[i] = layerMass * Bee.baseGrav;
-  }
-
-  for (let i = maxIdx - 2; i >= 0; i--) {
-    w[i] += w[i + 1];
+  for (let i = maxIdx - 1; i >= 0; i--) {
+    if (i + 1 < maxIdx) wGraph[i] += wGraph[i + 1];
   }
 
   for (let i = 0; i < maxIdx; i++) {
-    weightGraph[i].x = Math.round(m[i]);
-    weightGraph[i].y = Math.round(w[i]);
+    mGraph[i] /= Z_INTERVAL;
+    wGraph[i] *= Bee.baseGrav;
+    weightGraph[i] = {
+      x: mGraph[i],
+      y: wGraph[i],
+    };
   }
 
-  weightGraph = weightGraph.sort((a, b) => a.x - b.x);
-
-  if (weightGraph.length === 0) {
-    weightGraph.push({ x: 1, y: 1 });
+  if (maxIdx == 0) {
+    weightGraph.push({ x: 0, y: 0 });
   }
+
+  weightGraph = weightGraph.sort((x: DataPoint, y: DataPoint) => x.x - y.x);
 
   return weightGraph;
 }
@@ -1125,14 +1076,6 @@ export function initSimulation(
             }
             graphsOverall["widthGraphs"] = widthGraphs;
           } else if (graphIdx % graphs == 1) {
-            const areaGraph = buildAreaGraph();
-            setAreaGraph(areaGraph);
-            areaGraphs.push(areaGraph);
-            if (areaGraphs.length > ENSEMBLE_COUNT) {
-              areaGraphs.shift();
-            }
-            graphsOverall["areaGraphs"] = areaGraphs;
-          } else if (graphIdx % graphs == 2) {
             const densityGraph = buildDensityGraph();
             setDensityGraph(densityGraph);
             densityGraphs.push(densityGraph);
@@ -1140,7 +1083,7 @@ export function initSimulation(
               densityGraphs.shift();
             }
             graphsOverall["densityGraphs"] = densityGraphs;
-          } else if (graphIdx % graphs == 3) {
+          } else if (graphIdx % graphs == 2) {
             const weightGraph = buildWeightGraph();
             setWeightGraph(weightGraph);
             weightGraphs.push(weightGraph);

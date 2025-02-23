@@ -19,7 +19,6 @@ type GraphData = DataPoint[];
 
 interface Props {
   widthGraph: GraphData;
-  areaGraph: GraphData;
   densityGraph: GraphData;
   weightGraph: GraphData;
   attachmentGraph: GraphData;
@@ -27,7 +26,6 @@ interface Props {
 
 export function Graphs({
   widthGraph,
-  areaGraph,
   densityGraph,
   weightGraph,
   attachmentGraph,
@@ -98,48 +96,7 @@ export function Graphs({
             />
             <YAxis
               label={{
-                value: "Area (millipixels²)",
-                dx: -35,
-                angle: -90,
-                fontSize: 15,
-              }}
-              type="number"
-              dataKey="y"
-              name="y"
-              unit=""
-            />
-            <ZAxis type="number" range={[50]} />
-            <Scatter
-              name="Data"
-              data={areaGraph}
-              fill="#555555"
-              line
-              isAnimationActive={false}
-              shape="circle"
-            />
-          </ScatterChart>
-        </ResponsiveContainer>
-
-        <ResponsiveContainer minWidth={500} height={300}>
-          <ScatterChart
-            margin={{
-              top: 25,
-              right: 25,
-              bottom: 25,
-              left: 25,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              label={{ value: "z (millipixels)", dy: 15, fontSize: 15 }}
-              type="number"
-              dataKey="x"
-              name="x"
-              unit=""
-            />
-            <YAxis
-              label={{
-                value: "ρ (g/pixels³)",
+                value: "ρ (g/millipixels²)",
                 dx: -35,
                 angle: -90,
                 fontSize: 15,
@@ -177,7 +134,6 @@ export function Graphs({
               dataKey="x"
               name="x"
               unit=""
-              scale="log"
               tickFormatter={(value) =>
                 new Intl.NumberFormat("en-US", {
                   notation: "scientific",
@@ -197,7 +153,6 @@ export function Graphs({
               dataKey="y"
               name="y"
               unit=""
-              scale="log"
               tickFormatter={(value) =>
                 new Intl.NumberFormat("en-US", {
                   notation: "scientific",

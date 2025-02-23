@@ -15,7 +15,6 @@ type Graphs = GraphData[];
 
 interface GraphsOverall {
   widthGraphs: Graphs;
-  areaGraphs: Graphs;
   densityGraphs: Graphs;
   weightGraphs: Graphs;
   attachmentGraphs: Graphs;
@@ -63,7 +62,6 @@ export default function App() {
   );
 
   const [widthGraph, setWidthGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
-  const [areaGraph, setAreaGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
   const [densityGraph, setDensityGraph] = useState<GraphData>([{ x: 0, y: 0 }]);
   const [weightGraph, setWeightGraph] = useState<GraphData>([{ x: 1, y: 1 }]);
   const [attachmentGraph, setAttachmentGraph] = useState<GraphData>([
@@ -72,7 +70,6 @@ export default function App() {
 
   const [graphsOverall, setGraphsOverall] = useState<GraphsOverall>({
     widthGraphs: [],
-    areaGraphs: [],
     densityGraphs: [],
     weightGraphs: [],
     attachmentGraphs: [],
@@ -82,7 +79,6 @@ export default function App() {
     <>
       <Graphs
         widthGraph={widthGraph}
-        areaGraph={areaGraph}
         densityGraph={densityGraph}
         weightGraph={weightGraph}
         attachmentGraph={attachmentGraph}
@@ -117,7 +113,6 @@ export default function App() {
         sizeDelta={sizeDelta}
         massDelta={massDelta}
         setWidthGraph={setWidthGraph}
-        setAreaGraph={setAreaGraph}
         setDensityGraph={setDensityGraph}
         setWeightGraph={setWeightGraph}
         setAttachmentGraph={setAttachmentGraph}

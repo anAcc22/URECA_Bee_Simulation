@@ -14,7 +14,6 @@ import { initSimulation } from "./simulation";
 import { updateSetBeeCnt } from "./simulation";
 
 import { updateSetWidthGraph } from "./simulation";
-import { updateSetAreaGraph } from "./simulation";
 import { updateSetDensityGraph } from "./simulation";
 import { updateSetWeightGraph } from "./simulation";
 import { updateSetAttachmentGraph } from "./simulation";
@@ -34,7 +33,6 @@ type Graphs = GraphData[];
 
 interface GraphsOverall {
   widthGraphs: Graphs;
-  areaGraphs: Graphs;
   densityGraphs: Graphs;
   weightGraphs: Graphs;
   attachmentGraphs: Graphs;
@@ -51,7 +49,6 @@ interface Props {
   sizeDelta: number;
   massDelta: number;
   setWidthGraph: React.Dispatch<React.SetStateAction<GraphData>>;
-  setAreaGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setDensityGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setWeightGraph: React.Dispatch<React.SetStateAction<GraphData>>;
   setAttachmentGraph: React.Dispatch<React.SetStateAction<GraphData>>;
@@ -69,7 +66,6 @@ export function Simulation({
   sizeDelta,
   massDelta,
   setWidthGraph,
-  setAreaGraph,
   setDensityGraph,
   setWeightGraph,
   setAttachmentGraph,
@@ -110,7 +106,6 @@ export function Simulation({
     updateSetBeeCnt(setBeeCnt);
 
     updateSetWidthGraph(setWidthGraph);
-    updateSetAreaGraph(setAreaGraph);
     updateSetDensityGraph(setDensityGraph);
     updateSetWeightGraph(setWeightGraph);
     updateSetAttachmentGraph(setAttachmentGraph);

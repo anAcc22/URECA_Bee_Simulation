@@ -11,7 +11,6 @@ type Graphs = GraphData[];
 
 interface GraphsOverall {
   widthGraphs: Graphs;
-  areaGraphs: Graphs;
   densityGraphs: Graphs;
   weightGraphs: Graphs;
   attachmentGraphs: Graphs;

@@ -18,6 +18,7 @@ interface GraphsOverall {
   densityGraphs: Graphs;
   weightGraphs: Graphs;
   attachmentGraphs: Graphs;
+  points: GraphData;
 }
 
 export default function App() {
@@ -73,6 +74,7 @@ export default function App() {
     densityGraphs: [],
     weightGraphs: [],
     attachmentGraphs: [],
+    points: [],
   });
 
   return (

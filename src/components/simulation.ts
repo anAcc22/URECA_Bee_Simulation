@@ -16,6 +16,7 @@ interface GraphsOverall {
   densityGraphs: Graphs;
   weightGraphs: Graphs;
   attachmentGraphs: Graphs;
+  points: GraphData;
 }
 
 interface Vector2D {
@@ -873,6 +874,7 @@ let graphsOverall: GraphsOverall = {
   densityGraphs: [],
   weightGraphs: [],
   attachmentGraphs: [],
+  points: [],
 };
 
 function getZ(pos: Vector2D) {
@@ -1091,7 +1093,7 @@ export function initSimulation(
               weightGraphs.shift();
             }
             graphsOverall["weightGraphs"] = weightGraphs;
-          } else {
+          } else if (graphIdx % graphs == 3) {
             const attachmentGraph = buildAttachmentGraph();
             setAttachmentGraph(attachmentGraph);
             attachmentGraphs.push(attachmentGraph);
@@ -1099,6 +1101,21 @@ export function initSimulation(
               attachmentGraphs.shift();
             }
             graphsOverall["attachmentGraphs"] = attachmentGraphs;
+          } else {
+            const points = Array<DataPoint>();
+            let xMin = 1_000_000;
+            let yMin = 1_000_000;
+            bees.forEach((bee: Bee, _: number) => {
+              xMin = Math.min(xMin, bee.pos.x);
+              yMin = Math.min(yMin, bee.pos.y);
+            });
+            bees.forEach((bee: Bee, _: number) => {
+              points.push({
+                x: bee.pos.x - xMin,
+                y: bee.pos.y - yMin,
+              });
+            });
+            graphsOverall["points"] = points;
           }
           graphIdx++;
           setGraphsOverall(graphsOverall);

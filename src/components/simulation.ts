@@ -258,8 +258,8 @@ class Bee {
   nodeRadius: number;
   beeRadius: number;
 
-  static readonly detachChance = 0.000002;
-  static readonly flyTowardsQueenChance = 0.1;
+  static readonly detachChance = 0.0000002;
+  static readonly flyTowardsQueenChance = 0.2;
 
   static readonly queenChance = 0.02;
   static readonly baseGrav = 0.04;
@@ -401,9 +401,9 @@ class Bee {
 
     if (this.attachSet.length === 0) {
       if (this.cooldown) {
-        ctx.fillStyle = `hsla(${95 + this.cooldown}, 40%, 60%, 1)`;
+        ctx.fillStyle = `hsla(${115 + this.cooldown}, 40%, 60%, 1)`;
       } else {
-        ctx.fillStyle = `hsla(${60 - this.collisionHeat}, 40%, 60%, 1)`;
+        ctx.fillStyle = `hsla(${90 - this.collisionHeat}, 40%, 60%, 1)`;
       }
     } else {
       const massRatio = this.grav / Bee.baseGrav;
@@ -485,16 +485,17 @@ class Bee {
         }
       }
     } else {
-      const m = this.isReverseNoise ? -0.005 : 0.005;
-      const d = unitDiff({ x: canvasWidth / 2, y: rod.rodBound }, this.pos);
+      const m = this.isReverseNoise ? -0.001 : 0.001;
+      const d = unitDiff({ x: canvasWidth / 2, y: canvasHeight / 3 }, this.pos);
       const flyTowardsQueen = booleanChance(Bee.flyTowardsQueenChance);
 
-      if (flyTowardsQueen) {
-        this.vel.x += d.x / 10;
-        this.vel.x += d.y / 10;
+      if (flyTowardsQueen || !queenCovered) {
+        this.vel.x += d.x;
+        this.vel.x += d.y;
       } else {
         this.vel.x += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.xTime);
         this.vel.y += (queenCovered ? 0 : m) * PerlinNoise.getFBM(this.yTime);
+        this.vel.y += d.y;
       }
     }
   }
@@ -517,7 +518,6 @@ class Bee {
           this.attachSet.pop();
         }
         this.vel = this.det;
-        this.vel.y = 2.0;
         this.det = { x: 0, y: 0 };
         this.cooldown = 15;
         return;
@@ -692,7 +692,7 @@ class Bee {
       return;
     }
 
-    if (this.aerialState === "hover") {
+    if (this.attachSet.length === 0) {
       this.resolveHoverVelocity();
     } else {
       this.resolveAttachedVelocity();
@@ -1116,10 +1116,10 @@ export function initSimulation(
               });
             });
             graphsOverall["points"] = points;
+            setGraphsOverall(graphsOverall);
+            setImageLink(canvas.toDataURL("image/png"));
           }
           graphIdx++;
-          setGraphsOverall(graphsOverall);
-          setImageLink(canvas.toDataURL("image/png"));
         }
 
         frames++;
@@ -1166,7 +1166,7 @@ export function initSimulation(
 
           curCnt++;
           setBeeCnt(curCnt);
-          if (curCnt == 60) queenCovered = true;
+          if (curCnt == 30) queenCovered = true;
         }
       }
     }, 1000 / FPS);

@@ -36,6 +36,7 @@ interface GraphsOverall {
   densityGraphs: Graphs;
   weightGraphs: Graphs;
   attachmentGraphs: Graphs;
+  points: GraphData;
 }
 
 interface Props {

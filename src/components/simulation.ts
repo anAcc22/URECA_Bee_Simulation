@@ -1166,7 +1166,7 @@ export function initSimulation(
 
           curCnt++;
           setBeeCnt(curCnt);
-          if (curCnt == 30) queenCovered = true;
+          if (curCnt == 20) queenCovered = true;
         }
       }
     }, 1000 / FPS);

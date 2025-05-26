@@ -1,14 +1,14 @@
 # Fdb version 4
-["pdflatex"] 1740236062.53128 "main.tex" "main.pdf" "main" 1740236062.7508 0
-  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1736268207 35752 024fb6c41858982481f6968b5fc26508 ""
-  "/usr/share/texmf-dist/tex/latex/base/article.cls" 1736268207 20144 147463a6a579f4597269ef9565205cfe ""
-  "/usr/share/texmf-dist/tex/latex/base/size10.clo" 1736268207 8448 dbc0dbf4156c0bb9ba01a1c685d3bad0 ""
-  "/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1736268207 30006 3d512c0edd558928ddea1690180ef77e ""
-  "/usr/share/texmf-dist/web2c/texmf.cnf" 1736268207 41588 b43d3e860a4f94167ee1e725ff526a72 ""
-  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1738243576.37479 5318467 8236939515598d005dfbcc2e1a40f206 ""
-  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1738243513 7112999 d2c3790598c272685ac23ca1546d3308 ""
-  "main.aux" 1740236062.73351 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "main.tex" 1740236061.1735 94 8a0fbb93d23ac30ee7c89e3540f4f0b6 ""
+["pdflatex"] 1747274814.28241 "main.tex" "main.pdf" "main" 1747274814.59515 0
+  "/usr/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1742685315 35752 024fb6c41858982481f6968b5fc26508 ""
+  "/usr/share/texmf-dist/tex/latex/base/article.cls" 1742685315 20144 63d8bacaf52e5abf4db3bc322373e1d4 ""
+  "/usr/share/texmf-dist/tex/latex/base/size10.clo" 1742685315 8448 5cf247d4bd0c7d5d711bbbdf111fae2e ""
+  "/usr/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def" 1742685315 29785 9f93ab201fe5dd053afcc6c1bcf7d266 ""
+  "/usr/share/texmf-dist/web2c/texmf.cnf" 1742685315 42087 b0f9697c952c8f5a8eede4134282cb0d ""
+  "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1745734092 5311557 9da84c45f5b388655502706482323571 ""
+  "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1745734061 2008244 d480ca9b1cdef1876631f24263968e25 ""
+  "main.aux" 1747274814.57514 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "main.tex" 1747274730.90491 70 9880db0e7c6135a84a314664bd9212ec ""
   (generated)
   "main.aux"
   "main.log"

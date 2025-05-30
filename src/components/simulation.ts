@@ -1110,10 +1110,12 @@ export function initSimulation(
               yMin = Math.min(yMin, bee.pos.y);
             });
             bees.forEach((bee: Bee, _: number) => {
-              points.push({
-                x: bee.pos.x - xMin,
-                y: bee.pos.y - yMin,
-              });
+              if (bee.aerialState === "attached") {
+                points.push({
+                  x: bee.pos.x - xMin,
+                  y: bee.pos.y - yMin,
+                });
+              }
             });
             graphsOverall["points"] = points;
             setGraphsOverall(graphsOverall);

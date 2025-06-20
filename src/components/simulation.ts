@@ -656,18 +656,18 @@ class Bee {
     } else if (!this.isAttachedToBoard() && this.supportSet.length === 0) {
       const d = unitDiff(queenPos, this.pos);
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
-      const toAdvance = booleanChance((1 - p + beta) / 3.0);
+      const toAdvance = booleanChance((p + beta) / 3.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / (6 * (1 - beta) + 6);
-        a.y += d.y / 20 + (Math.random() - 0.5) / (30 * (1 - beta) + 30);
+        a.x += d.x / Math.abs(d.x) / (3 * (1 - beta) + 3);
+        a.y += d.y / 20 + (Math.random() - 0.5) / (15 * (1 - beta) + 15);
       }
     } else {
       const d = unitDiff(queenPos, this.pos);
       const p = Math.abs(this.pos.x - canvasWidth / 2) / (canvasWidth / 2);
       const toAdvance = booleanChance((p + beta) / 4.0);
       if (toAdvance) {
-        a.x += d.x / Math.abs(d.x) / (3 * (1 - beta) + 3);
-        a.y -= d.y / 20 + (Math.random() - 0.5) / (15 * (1 - beta) + 15);
+        a.x += d.x / Math.abs(d.x) / (6 * (1 - beta) + 6);
+        a.y -= d.y / 20 + (Math.random() - 0.5) / (30 * (1 - beta) + 30);
       }
     }
 

@@ -1,0 +1,58 @@
+\begin{thebibliography}{10}
+
+\bibitem{anderson2002self}
+Carl Anderson, Guy Theraulaz, and J-L Deneubourg.
+\newblock Self-assemblages in insect societies.
+\newblock {\em Insectes sociaux}, 49:99--110, 2002.
+
+\bibitem{carlesso2023become}
+Daniele Carlesso and Chris~R Reid.
+\newblock How to become one: the proximate mechanisms of self-assembly behaviour in social insects (hymenoptera: Formicidae, apidae).
+\newblock {\em Myrmecological News}, 33, 2023.
+
+\bibitem{fefferman2006modeling}
+NH~Fefferman and PT~Starks.
+\newblock A modeling approach to swarming in honey bees (apis mellifera).
+\newblock {\em Insectes sociaux}, 53:37--45, 2006.
+
+\bibitem{fetecau2012mathematical}
+RC~Fetecau and A~Guo.
+\newblock A mathematical model for flight guidance in honeybee swarms.
+\newblock {\em Bulletin of mathematical biology}, 74:2600--2621, 2012.
+
+\bibitem{grozinger2014molecules}
+Christina~M Grozinger, Jessica Richards, and Heather~R Mattila.
+\newblock From molecules to societies: mechanisms regulating swarming behavior in honey bees (apis spp.).
+\newblock {\em Apidologie}, 45:327--346, 2014.
+
+\bibitem{heinrich1981mechanisms}
+Bernd Heinrich.
+\newblock The mechanisms and energetics of honeybee swarm temperature regulation.
+\newblock {\em Journal of Experimental Biology}, 91(1):25--55, 1981.
+
+\bibitem{lin2003economics}
+Chung-cheng Lin, Tze-wei Chen, and Ching-chong Lai.
+\newblock The economics of honeybee swarming.
+\newblock {\em Regional Science and Urban Economics}, 33(5):581--594, 2003.
+
+\bibitem{peleg2018collective}
+Orit Peleg, Jacob~M Peters, Mary~K Salcedo, and Lakshminarayanan Mahadevan.
+\newblock Collective mechanical adaptation of honeybee swarms.
+\newblock {\em Nature Physics}, 14(12):1193--1198, 2018.
+
+\bibitem{perlin2002improving}
+Ken Perlin.
+\newblock Improving noise.
+\newblock In {\em Proceedings of the 29th annual conference on Computer graphics and interactive techniques}, pages 681--682, 2002.
+
+\bibitem{schmickl2011beeclust}
+Thomas Schmickl and Heiko Hamann.
+\newblock Beeclust: A swarm algorithm derived from honeybees.
+\newblock {\em Bio-inspired computing and communication networks}, pages 95--137, 2011.
+
+\bibitem{shishkov2022strength}
+Olga Shishkov, Claudia Chen, Claire~Allison Madonna, Kaushik Jayaram, and Orit Peleg.
+\newblock Strength-mass scaling law governs mass distribution inside honey bee swarms.
+\newblock {\em Scientific reports}, 12(1):17388, 2022.
+
+\end{thebibliography}

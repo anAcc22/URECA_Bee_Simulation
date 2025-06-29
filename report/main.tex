@@ -29,7 +29,6 @@
 \titleformat{\subsection}{\normalfont\large\bfseries\MakeUppercase}{\thesubsection}{1em}{}
 \titleformat{\subsubsection}{\normalfont\normalsize\bfseries\MakeUppercase}{\thesubsubsection}{1em}{}
 
-
 %%% The following command sets margin sizes
 \usepackage[top=1in, bottom=1in, left=0.75in, right=0.75in]{geometry}
 
@@ -68,20 +67,14 @@
 
 
 %%%%% The following commands control the title of the paper and the authors' names
-\title{Paper Title}
+\title{Swarming Behavior in Honeybees}
 \date{}
 \author{
-    {Student Name (1st Author)} \\
-    School of Student (1st Author) \\
+    {Lim Jia Qing} \\
+    College of Computing and Data Science  \\
     \and
-    {Student Name (2nd Author)} \\
-    School of Student (2nd Author) \\
-    \and
-    {URECA Supervisor Name} \\
-    School of Supervisor \\
-    \and
-    {Collaborating Supervisor Name} \\
-    School or Organisation of Collaborating Supervisor
+    {Asst Prof Yong Ee Hou} \\
+    School of Physical and Mathematical Sciences \\
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,15 +110,14 @@
 
     \section{Introduction}
 
-    Nature is complex, even seemingly simple problems such as the double pendulum
-    have proven near intractable. Yet within this chaos, scientists have always
-    found ways and means to quantify and model this universe. The best formulations are
-    not necessarily the most complex ones. Consider Newton's laws of motion or Maxwell's
-    equations of electromagnetism. Despite their compactness, they've proven useful time
-    after time again, suggesting that Occam's razor still prevails. In this paper, we'll be
-    exploring the collective motion of Western honey bees (\textit{Apis mellifera}). In
-    the same spirit, we hope to develop a set of simple rules to describe this fascinating
-    phenomena.
+    In the material sciences, self-assembly has always been a popular tool to understand the
+    coalescence of microscopic particles and molecules. With the rise in computational power in recent
+    decades, the concept of self-assembly has also proven critical in designing \textit{artificial life}
+    programs. Famous examples include cellular automaton \cite{fetecau2012mathematical} as well as
+    the Boids program \cite{reynolds1987flocks}. Through a few simple principles implemented at
+    the local level, we're able to give rise to astounding emergent group behavior that transcends
+    the individual. In this paper, we'll be examining the swarming of Western honey bees
+    (\textit{Apis mellifera}) through the lens of self-assembly.
 
     During reproduction, there are four distinct phases that honey bees go through \cite{grozinger2014molecules}.
     The first is the swarm exodus phase where they leave their current nest, followed by the migration
@@ -149,21 +141,21 @@
     \end{figure}
 
     There have been several attempts in the literature that aim to demystify self-assembly in Western
-    honey bees. At the exodus phase, \cite{fefferman2006modeling} explores how several factors such as
+    honey bees. At the exodus phase, Fefferman and Starks explored how several factors such as
     the colony size and the worker age distribution may be incorporated into a holistic model that predicts
-    when swarming is triggered. On the contrary,  \cite{lin2003economics} argues that swarming is initiated
+    when swarming is triggered \cite{fefferman2006modeling}. On the contrary,  
+    Lin, Chen, and Lai argue that swarming is initiated
     not by the queen, but by the individual decisions of thousands of bees, each trying to optimize
-    the honey that they may contribute to the hive.
-
-    Moving on to the migration phase, \cite{fetecau2012mathematical} explores the use of 2D ODE-based models
+    the honey that they may contribute to the hive \cite{lin2003economics}.
+    Moving on to the migration phase, Fetecau and Guo experimented with the use of 2D ODE-based models
     rooted in the \textit{streaker bee hypothesis} that try and simulate the flight of honey bees towards
-    the new nest. There are also robotics-based approaches such as \textit{BEECLUST}
+    the new nest \cite{fetecau2012mathematical}. There are also robotics-based approaches such as \textit{BEECLUST}
     that use simple qualitative principles to programatically determine the next step of each bee
     \cite{schmickl2011beeclust}.
 
     Unfortunately, the bivouac phase has been largely left untouched. This is unsurprising as there is
     little data available on honey bee bivouacs. A notable success in recent times is the establishment
-    of a strength-mass power scaling law by \cite{shishkov2022strength}. However, there haven't been
+    of a strength-mass power scaling law \cite{shishkov2022strength}. However, there haven't been
     any attempts to establish a mathematical framework that describes this formation process, thus
     offering a gap that our paper aims to bridge.
 
@@ -175,7 +167,6 @@
     direction in which they're heading towards. It's important to stress that our focus is on
     \textit{local} rules, rather than global ones, as we're keen to discover beautiful
     emergent states that stem from simple behavior at the individual level.
-
     Drawing inspiration from \cite{anderson2002self} and \cite{carlesso2023become} that explore self-assembly
     in other social insects such as \textit{Eciton} army ants and \textit{Solenopsis} fire ants, we also adopt
     a simlar state machine approach, where each bee has a series of finite states that it operates
@@ -223,7 +214,7 @@
 
     \subsection{Initialization}
     To mimic the setup in \cite{peleg2018collective}, we design a board situated at
-    a y-coordinate of $\tfrac{h_{c}}{3}$. The queen spawns at 
+    a $y$-coordinate of $\tfrac{h_{c}}{3}$. The queen spawns at 
     $\begin{psmallmatrix} \sfrac{w_{c}}{2} \\ \sfrac{h_{c}}{3} \end{psmallmatrix}$.
     It remains stationary throughout the simulation and serves as an anchor
     for worker bees to latch onto. For realism, the queen's dimensions are enlarged by
@@ -233,8 +224,8 @@
     canvas. Bees spawn from either the left or right bottom corners with equal
     probability. We add a small position offset from the uniform distribution $U(0, 30)$
     to make it less monotonous. To decide the initial velocity, should the queen be
-    covered, we set it to $\vec{v} = \begin{psmallmatrix} U(0, 0.5) \\ -2 \end{psmallmatrix}$,
-    otherwise, we direct it towards the queen bee. The acceleration $\vec{a}$ is always
+    covered, we set it to $\mathbf{v} = \begin{psmallmatrix} U(0, 0.5) \\ -2 \end{psmallmatrix}$,
+    otherwise, we direct it towards the queen bee. The acceleration $\mathbf{a}$ is always
     initialized at zero.
 
     Internally, we keep track on the number of frames that have elapsed. Every $50$
@@ -282,8 +273,8 @@
     the attached state so this suffices for now.
 
     In the second scenario, we resolve the collision using the conservation of linear momentum.
-    Suppose a bee touches the left wall, we'll have $\vec{v_{1}} = \begin{psmallmatrix} -x \\ y \end{psmallmatrix}$,
-    where $\vec{v_{0}} = \begin{psmallmatrix} x \\ y \end{psmallmatrix}$. Alternatively, if
+    Suppose a bee touches the left wall, we'll have $\mathbf{v}_{1} = \begin{psmallmatrix} -x \\ y \end{psmallmatrix}$,
+    where $\mathbf{v}_{0} = \begin{psmallmatrix} x \\ y \end{psmallmatrix}$. Alternatively, if
     it collides with another hovering bee, we'll use $m_{1}v_{1} + m_{2}v_{2} = m_{1}v_{1}^{\prime} + m_{2}v_{2}^{\prime}$
     to solve along each axis separately.
 
@@ -310,31 +301,31 @@
     that a bee that has to support more weight is situated closer to the board, i.e., it has to pull
     itself closer to the board. This implies that we need to exert a force on the bee directed
     \textit{upwards} in proportion to the bee's mass, let's call this force vector
-    $\vec{F_{m}} = \begin{psmallmatrix} 0 \\ -mg \end{psmallmatrix}$, where $g$
+    $\mathbf{F}_{m} = \begin{psmallmatrix} 0 \\ -mg \end{psmallmatrix}$, where $g$
     represents gravitational acceleration. Within the simulation, we used $m = 1, g = 0.04$.
     Higher $g$ values produce more compressed structures that deviated too far from reality, so
     we opted for a low $g$ value instead.
 
     This force vector alone isn't sufficient in producing the desire effect as the bee will merely
     stick to the board. Indeed, there needs to be some \textit{counteracting} force. Consider
-    an arbitrary point (board/bee) that a bee is attaching to, let it be situated at $\vec{p_{1}}$.
+    an arbitrary point (board/bee) that a bee is attaching to, let it be situated at $\mathbf{p}_{1}$.
     Intuitively, the closer we get to this point, the harder it tries to push us away from it.
     This is reminiscent of Hooke's law. Consider the unit vector pointing from the attachment
-    point to the bee $\hat{v}$. Additionally, observe that the separation distance $d_{n}$ at which no
+    point to the bee $\hat{\mathbf{v}}$. Additionally, observe that the separation distance $d_{n}$ at which no
     pushing occurs is at either $r_{b}$ (bee and board) or $r_{b_{1}}+r_{b_{2}}$ (bee and bee).
     Letting the actual separation distance be $d_{a}$, we have
-    $\vec{F_{a}} = k \cdot (d_{n}-d_{a}) \cdot \hat{v}$. Through trial and error, we found that
+    $\mathbf{F}_{a} = k \cdot (d_{n}-d_{a}) \cdot \hat{\mathbf{v}}$. Through trial and error, we found that
     $k = 0.02$ was most suitable.
 
     In the same vein, let's consider the bees that one has to support. It turns out that the
-    same analogy holds, and we may derive a similar expression for $\vec{F_{s}}$, representing
+    same analogy holds, and we may derive a similar expression for $\mathbf{F}_{s}$, representing
     the force exerted by a supporting bee.
 
     Although it may appear that these forces are sufficient
     in producing the desired effect, our preliminary testing shows that overlaps can still occur
     near the base of the bivouac. At this high-density zones, a bee may be colliding with many
     other bees, yet it may not be connected to every one of them. Therefore, let us impose yet
-    another force, coined $\vec{F_{r}}$ that acts a repulsive force handling these miscellaneous
+    another force, coined $\mathbf{F}_{r}$ that acts a repulsive force handling these miscellaneous
     bees. For simplicity, let this be equal to the unit vector pointing from the miscellaneous
     bee to our current bee.
 
@@ -342,11 +333,11 @@
 
     \begin{equation}
         \label{eq:resultant_force}
-        \vec{F} = \vec{F_{m}} + \sum_{i}^{}\vec{F_{a_{i}}} + \sum_{j}^{}\vec{F_{s_{j}}} + \sum_{k}^{}\vec{F_{r_{k}}}
+        \mathbf{F} = \mathbf{F}_{m} + \sum_{i}^{}\mathbf{F}_{a_{i}} + \sum_{j}^{}\mathbf{F}_{s_{j}} + \sum_{k}^{}\mathbf{F}_{r_{k}}
     \end{equation}
 
-    Using \eqref{eq:resultant_force}, we may solve for the acceleration $\vec{a}$ accordingly.
-    At the end of each frame, we'll add $\vec{a}$ to $\vec{v}$ and then update $\vec{p}$
+    Using \eqref{eq:resultant_force}, we may solve for the acceleration $\mathbf{a}$ accordingly.
+    At the end of each frame, we'll add $\mathbf{a}$ to $\mathbf{v}$ and then update $\mathbf{p}$
     accordingly. At $60$ frames per second (FPS), the time step is small enough to produce
     a smooth and realistic-looking simulation. A caveat is that as the number of bees
     increases, rendering overhead results in a slight degradation in FPS.
@@ -356,7 +347,7 @@
     In spite of the existing interactions, we're still unable to replicate what we observe
     in \cite{peleg2018collective}, because we have yet to incorporate the concept of coalescence
     in our simulation, i.e., the bees aren't converging towards the queen. To resolve
-    this dilemma, we propose two-parameter approach consisting of a \textit{crawl rate}
+    this dilemma, we propose a two-parameter approach consisting of a \textit{crawl rate}
     and a \textit{climb rate}. The former affects bees that are attached to the board,
     while the latter affects bees that are only attached to other bees. In general however,
     there are several common principles that we rely on in crafting our subsequent equations.
@@ -380,7 +371,7 @@
 
     Let's consider the case where we have a standalone bee attached to a board that isn't
     supporting other bees. First, denote the unit vector pointing from this bee to the queen
-    as $\hat v$. Next, let's compute a probability $c$ that dictates whether to advance the bee.
+    as $\hat{\mathbf{v}}$. Next, let's compute a probability $c$ that dictates whether to advance the bee.
     The crawl rate ($\alpha$) is a value that ranges between $0$ and $1$ and determines $c$
     as such:
 
@@ -410,9 +401,9 @@
     The climb rate ($\beta$) affects bees that aren't attached to the board. Ideally, bees along the
     peripheral of the bivouac would aim to climb downwards towards an imaginary summit of the
     structure. It's convenient to thus define a new point
-    $\vec{p_{i}} = \begin{psmallmatrix} \sfrac{w_{c}}{2} \\ h_{c} \end{psmallmatrix}$ that
-    represents this imaginary summit, and let's redefine $\hat v$ as the unit vector pointing from the
-    bee's position to $\vec{p_{i}}$. For the case where we have a bee on the perimeter of the structure,
+    $\mathbf{p} = \begin{psmallmatrix} \sfrac{w_{c}}{2} \\ h_{c} \end{psmallmatrix}$ that
+    represents this imaginary summit, and let's redefine $\hat{\mathbf{v}}$ as the unit vector pointing from the
+    bee's position to $\mathbf{p}$. For the case where we have a bee on the perimeter of the structure,
     i.e., those not supporting other bees, we have:
 
     \begin{equation}
@@ -463,7 +454,7 @@
     process, we also recommend trying out the simulation \href{https://anacc22.github.io/URECA_Bee_Simulation/}{here}.
     There are several input buttons that you may use to alter the behavior of the bees.
 
-    \section{Results}
+    \section{Results \& Discussion}
 
     \begin{figure}[H]
         \centering
@@ -488,7 +479,7 @@
     To begin, we mirror the analysis in \cite{shishkov2022strength} by varying the bee count while
     keeping the other parameters constant ($\alpha = \beta = \sfrac{2}{5}$). In addition, we
     adopt the \textit{binning method} by collecting samples at distinct, uniform intervals down
-    the vertical axis, which we'll denote as $z$.
+    the vertical axis, which we'll denote as the depth $z$.
 
     \begin{figure}[H]
         \centering
@@ -630,10 +621,11 @@
     physical experiments conducted in \cite{peleg2018collective}.
 
     Another remarkable property is that the real-life parameter \textit{temperature}
-    may in fact be a linear combination of $\alpha$ and $\beta$. From \cite{heinrich1981mechanisms}
-    swarm morphologies exist as means for temperature regulation. Low temperatures
-    produce structures with a higher $\alpha$ and a low $\beta$, whereas high temperatures
-    work in reverse, producing more pointy structures with a low $\alpha$ and a high $\beta$.
+    may in fact be a linear combination of $\alpha$ and $\beta$. According to physical experiments,
+    swarm morphologies exist as means for temperature regulation \cite{heinrich1981mechanisms}.
+    Low temperatures produce structures with a higher $\alpha$ and a low $\beta$, whereas
+    high temperatures work in reverse, producing more pointy structures with a low $\alpha$
+    and a high $\beta$.
 
     \begin{figure}[H]
         \centering
@@ -649,9 +641,71 @@
 
     \section{Conclusion}
 
+    From our analysis, it appears that the simple rules we've designed were able to yield
+    results that corroborate with real-life findings. Additionally, the simulation may be
+    extended upon to explore how other parameters such as the \textit{curvature} is
+    changing over time.
+
+    There are several limitations to this study. Firstly, the nature of this research is
+    very experimental, i.e., a lot of trial and error is required to find the right parameter
+    values and the right formulas, and the ones that we've suggested may not be the only ones that
+    could potentially work. The state space of possible combinations is simply too large to cover,
+    so it's likely that we've inevitably missed more optimal configurations. Secondly, we lack
+    comprehensive information on the \textit{internal} structure of the bivouac, hence we can't verify
+    the accuracy of the diagonally-centered square lattice structure that our model yields.
+
+    Moving forward, we hope to work on a three-dimensional variation of this model. We believe this
+    is possible through better optimization techniques, and more importantly, with the assistance
+    of Dr. Orit Peleg from the University of Colorado Boulder, we are able to receive more information
+    on the structure of the bivouacs in the future. With the development of a three-dimensional model,
+    we can then better compare our findings (such as the $\alpha$ coefficient) with the established values
+    in the literature.
+
     \section*{Acknowledgments}
 
     I would like to acknowledge the funding support from Nanyang Technological University – URECA Undergraduate Research Programme for this research project.
+
+    In addition, I would also like to thank Ph.D student Donn Liew for offering advice and giving me an initial
+    version of the 2D simulation (written in Python), which I used as inspiration throughout the URECA project.
+
+    Next, I would like to thank Prof Yong (my mentor) for his extensive guidance throughout the past year. His
+    teachings and feedback have allowed the model to become what it is today.
+
+    Finally, I want to thank Dr. Orit Peleg for providing the key video recording upon which we've modeled the simulation after.
+
+    \section*{Appendix}
+
+    So far, we've assumed that the worker bees are homogeneous in terms of both size and mass. However,
+    in nature, it's likely for small variations to exist within the worker bees. For simplicity, let's try
+    to use the Box-Muller transformation to retrieve a random value $b$ from zero to one \cite{box1958note}.
+    Now, suppose we want to generate a value $r$ in the range $[1-\delta, 1+\delta]$, where $\delta \in (0, 1)$, we may retrive
+    it using $r = 2b\delta + (1 - \delta)$. This $r$ may then be multiplied with the base values
+    of either mass or ratio that we've established earlier, producing a range of different kinds of bees.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{size_delta.pdf}
+        \caption{A bivouac with a size delta of $\sfrac{1}{2}$}
+        \label{fig:size_delta}
+    \end{figure}
+
+    From \autoref{fig:size_delta}, one may observe that the larger bees seem to be more prevalent around
+    the perimeter of the bivouac. That's not to discount the fact that there are several large bees nested
+    within the structure; but intuitively, it makes sense to have smaller bees near the core to provide
+    a denser layer that's capable of supporting more bees. Note that a larger bee does not necessary
+    mean a stronger one, it only implies that it takes up more space.
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\linewidth]{mass_delta.pdf}
+        \caption{A bivouac with a mass delta of $\sfrac{1}{2}$}
+        \label{fig:mass_delta}
+    \end{figure}
+
+    \autoref{fig:mass_delta} reveals that the heavier bees (indicated by the darker shade) tend to be situated
+    near the queen. This is natural because even in the simplest case of a chain consisting of two bees, it would
+    make sense for the heavier bee to be supporting the lighter one, not the other way around. Therefore, having
+    the heavy bees clustered in the upper layers creates a more preferrable stable structure.
 
     \bibliographystyle{plain}  % Use an appropriate style (plainnat, abbrvnat, etc.)
     \bibliography{references}  % This refers to references.bib (without .bib extension)

@@ -5,6 +5,11 @@ Carl Anderson, Guy Theraulaz, and J-L Deneubourg.
 \newblock Self-assemblages in insect societies.
 \newblock {\em Insectes sociaux}, 49:99--110, 2002.
 
+\bibitem{box1958note}
+George~EP Box and Mervin~E Muller.
+\newblock A note on the generation of random normal deviates.
+\newblock {\em The annals of mathematical statistics}, 29(2):610--611, 1958.
+
 \bibitem{carlesso2023become}
 Daniele Carlesso and Chris~R Reid.
 \newblock How to become one: the proximate mechanisms of self-assembly behaviour in social insects (hymenoptera: Formicidae, apidae).
@@ -44,6 +49,11 @@ Orit Peleg, Jacob~M Peters, Mary~K Salcedo, and Lakshminarayanan Mahadevan.
 Ken Perlin.
 \newblock Improving noise.
 \newblock In {\em Proceedings of the 29th annual conference on Computer graphics and interactive techniques}, pages 681--682, 2002.
+
+\bibitem{reynolds1987flocks}
+Craig~W Reynolds.
+\newblock Flocks, herds and schools: A distributed behavioral model.
+\newblock In {\em Proceedings of the 14th annual conference on Computer graphics and interactive techniques}, pages 25--34, 1987.
 
 \bibitem{schmickl2011beeclust}
 Thomas Schmickl and Heiko Hamann.

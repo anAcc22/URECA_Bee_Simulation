@@ -127,7 +127,7 @@ export function Simulation({
     <>
       <canvas
         ref={ref}
-        className="absolute z-0 w-full h-full bg-gray-50 active:cursor-pointer"
+        className="absolute z-0 w-full h-full bg-white active:cursor-pointer"
       ></canvas>
     </>
   );

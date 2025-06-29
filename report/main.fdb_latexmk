@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1751188742.98387 "main.aux" "main.bbl" "main" 1751191305.98664 0
+["bibtex main"] 1751188742.98387 "main.aux" "main.bbl" "main" 1751192248.42703 0
   "./references.bib" 1751182698.04496 4316 1519e8cd4c4f39895d91b7a885a0acab ""
   "/usr/share/texmf-dist/bibtex/bst/base/plain.bst" 1742685315 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1751191305.67215 7457 45803fcce9236790b0257f696ceadb3a "pdflatex"
+  "main.aux" 1751192248.15048 7457 45803fcce9236790b0257f696ceadb3a "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1751191304.40175 "main.tex" "main.pdf" "main" 1751191305.9869 0
+["pdflatex"] 1751192246.89998 "main.tex" "main.pdf" "main" 1751192248.42736 0
   "/usr/share/texmf-dist/fonts/enc/dvips/base/8r.enc" 1742685315 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texmf-dist/fonts/map/fontname/texfonts.map" 1742685315 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texmf-dist/fonts/tfm/adobe/helvetic/phvb7t.tfm" 1742685315 2240 eb56c13537f4d8a0bd3fafc25572b1bd ""
@@ -147,10 +147,10 @@
   "crawl_density.pdf" 1750171869.04517 105363 ed9d84147bb036c1bbc220311b65c45a ""
   "crawl_diameter.pdf" 1750171826.46964 95748 d62b4b7e4adf62f66f8c6c719dc88661 ""
   "heatmap.pdf" 1750175207.34291 33737 f58102205bf9af7bc3e7b34903ccabfd ""
-  "main.aux" 1751191305.67215 7457 45803fcce9236790b0257f696ceadb3a "pdflatex"
+  "main.aux" 1751192248.15048 7457 45803fcce9236790b0257f696ceadb3a "pdflatex"
   "main.bbl" 1751188743.12748 2863 0cf27d602a7097ee70e392c38f3c44cd "bibtex main"
-  "main.out" 1751191305.67342 2143 faf9a484e8d9e536e6facdd4e0b73a5a "pdflatex"
-  "main.tex" 1751191304.07583 38175 7a4f0eedad1d8e9dcc05b262971ff146 ""
+  "main.out" 1751192248.15214 2143 faf9a484e8d9e536e6facdd4e0b73a5a "pdflatex"
+  "main.tex" 1751192246.13004 38175 d3dbba48dc91d60e8c69d2e66ccd286a ""
   "mass_delta.pdf" 1751188665.20775 91830 cba7283d9dd240d6210abde7f453fef1 ""
   "phase_diagram.pdf" 1750174178.5233 48386 5bd010effb369f7e38702d5b5c1b46ad ""
   "phases.pdf" 1749994857.75322 324358 8d2a4ba73f1586ed60f92176921aecac ""

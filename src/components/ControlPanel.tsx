@@ -233,11 +233,11 @@ export function ControlPanel({
         </div>
 
         <div className="flex justify-between">
-          <div>
+          <div className="flex items-center space-x-3">
             <span className="text-md font-semibold">Max. Bee Count: </span>
             <textarea
               rows={1}
-              cols={4}
+              cols={3}
               placeholder={maxBeeCnt.toString()}
               className="appearance-none bg-gray-100 resize-none"
               id="textMaxBeeCnt"

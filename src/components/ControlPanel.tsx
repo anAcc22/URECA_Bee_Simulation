@@ -1,4 +1,5 @@
 import { Status } from "../types";
+import { useState } from "react";
 
 interface DataPoint {
   x: number;
@@ -56,6 +57,8 @@ export function ControlPanel({
   setMassDelta,
   graphsOverall,
 }: Props) {
+  const [maxBeeStr, setMaxBeeStr] = useState<string>("");
+
   return (
     <>
       <div
@@ -235,13 +238,21 @@ export function ControlPanel({
         <div className="flex justify-between">
           <div className="flex items-center space-x-3">
             <span className="text-md font-semibold">Max. Bee Count: </span>
-            <textarea
-              rows={1}
-              cols={3}
+            <input
               placeholder={maxBeeCnt.toString()}
-              className="appearance-none bg-gray-100 resize-none"
-              id="textMaxBeeCnt"
-            ></textarea>
+              className="appearance-none bg-gray-100 resize-none w-10"
+              id="maxBeeCnt"
+              onChange={(e) => {
+                setMaxBeeStr(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  if (maxBeeStr.length) setMaxBeeCnt(parseInt(maxBeeStr));
+                  else setMaxBeeCnt(0);
+                  document.getElementById("maxBeeCnt")?.blur();
+                }
+              }}
+            ></input>
           </div>
           <button
             className="bg-gray-500 text-white w-12 rounded-full

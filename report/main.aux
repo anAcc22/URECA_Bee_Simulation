@@ -5,73 +5,53 @@
 \citation{fetecau2012mathematical}
 \citation{reynolds1987flocks}
 \citation{grozinger2014molecules}
+\citation{peleg2018collective}
 \citation{grozinger2014molecules}
 \citation{peleg2018collective}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
 \citation{fefferman2006modeling}
 \citation{lin2003economics}
 \citation{fetecau2012mathematical}
 \citation{schmickl2011beeclust}
-\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces An overview of the reproduction phases \cite  {grozinger2014molecules}}}{1}{figure.1}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Bivouacs in nature \cite  {peleg2018collective}}}{1}{figure.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces  a) An overview of the reproduction phases \cite  {grozinger2014molecules}. There are several key phases that honey bees go through. The first is the swarm exodus phase where they leave their current nest, followed by the migration phase where they initiate their search for a new site. When a suitable site is found, the bees form a temporary cluster. This inverted mount is known as a \textit  {bivouac}, and is the subject of study in this paper. b) Examples of bivouacs in nature \cite  {peleg2018collective}, though the structure we eventually aim to emulate is more regular, almost hemispherical in shape. }}{2}{figure.1}\protected@file@percent }
 \citation{shishkov2022strength}
+\citation{peleg2018collective}
+\citation{peleg2018collective}
 \citation{peleg2018collective}
 \citation{anderson2002self}
 \citation{carlesso2023become}
+\@writefile{toc}{\contentsline {section}{\numberline {2}Methodology}{3}{section.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces  a) The physical setup as illustrated in \cite  {peleg2018collective} in comparison with b) a snapshot of our simulation. The topmost red node denotes the (larger than average) queen bee. Worker bees are denoted as point masses, with the faint outer circle signifying their reach. Solid black edges denote connections. i.e., bees clinging onto one another. }}{3}{figure.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Implementation}{4}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Coordinate System}{4}{subsection.3.1}\protected@file@percent }
 \citation{peleg2018collective}
-\@writefile{toc}{\contentsline {section}{\numberline {2}Methodology}{2}{section.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {3}Implementation}{2}{section.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}Coordinate System}{2}{subsection.3.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Initialization}{2}{subsection.3.2}\protected@file@percent }
 \citation{perlin2002improving}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Collisions}{3}{subsection.3.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}States}{3}{subsection.3.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Hover}{3}{subsubsection.3.4.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}Attached}{3}{subsubsection.3.4.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Initialization}{5}{subsection.3.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Collisions}{5}{subsection.3.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.4}States}{6}{subsection.3.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.1}Hover}{6}{subsubsection.3.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.4.2}Attached}{6}{subsubsection.3.4.2}\protected@file@percent }
 \citation{peleg2018collective}
-\newlabel{eq:resultant_force}{{1}{4}{Attached}{equation.1}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Coalescence}{4}{subsection.3.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Crawl Rate}{4}{subsubsection.3.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Climb Rate}{4}{subsubsection.3.5.2}\protected@file@percent }
+\newlabel{eq:resultant_force}{{1}{7}{Attached}{equation.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.5}Coalescence}{8}{subsection.3.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.1}Crawl Rate}{8}{subsubsection.3.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {3.5.2}Climb Rate}{9}{subsubsection.3.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Simulation}{10}{subsection.3.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {4}Results \& Discussion}{10}{section.4}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces  Each snapshot is taken in increments of $25$ bees, up to $150$ bees, for $\alpha = \beta = \sfrac {7}{10}$. a) At the start, bees target the exposed queen. b) Once the queen has been covered, bees land randomly onto the board and begin crawling towards the center. Across stages (c), (d), and (e), more bees are introduced into the system and attach to the structure. Yellow bees are those that are supporting at least one bee, while red bees are those without any bees to support, and are therefore prime candidates to climb downwards as described earlier. f) The bivouac has stabilized and there is minimal climbing and structural fluctuations. }}{10}{figure.3}\protected@file@percent }
+\newlabel{fig:timelapse}{{3}{10}{Each snapshot is taken in increments of $25$ bees, up to $150$ bees, for $\alpha = \beta = \sfrac {7}{10}$. a) At the start, bees target the exposed queen. b) Once the queen has been covered, bees land randomly onto the board and begin crawling towards the center. Across stages (c), (d), and (e), more bees are introduced into the system and attach to the structure. Yellow bees are those that are supporting at least one bee, while red bees are those without any bees to support, and are therefore prime candidates to climb downwards as described earlier. f) The bivouac has stabilized and there is minimal climbing and structural fluctuations}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Bee Count}{11}{subsection.4.1}\protected@file@percent }
+\newlabel{section:bee_count}{{4.1}{11}{Bee Count}{subsection.4.1}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces  a) Diameter against depth $z$, where the diameter is the difference between the leftmost and rightmost bees in a layer. b) Density $\rho $ against depth $z$, where each bee has a default mass of $g$ grams. c) Supported weight $W$ (sum of weight of current layer and all others below it) against layer mass $M$. d) Coefficient of best fit $a$ against count. e) Attachment number frequencies, where the attachment number is defined as the sum of the in-degree and out-degree. }}{11}{figure.4}\protected@file@percent }
+\newlabel{fig:bee_count}{{4}{11}{a) Diameter against depth $z$, where the diameter is the difference between the leftmost and rightmost bees in a layer. b) Density $\rho $ against depth $z$, where each bee has a default mass of $g$ grams. c) Supported weight $W$ (sum of weight of current layer and all others below it) against layer mass $M$. d) Coefficient of best fit $a$ against count. e) Attachment number frequencies, where the attachment number is defined as the sum of the in-degree and out-degree}{figure.4}{}}
 \citation{shishkov2022strength}
 \citation{shishkov2022strength}
-\@writefile{toc}{\contentsline {subsection}{\numberline {3.6}Simulation}{5}{subsection.3.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {4}Results \& Discussion}{5}{section.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces A $300$ bee structure ($\alpha = \beta = \sfrac {3}{5}$)}}{5}{figure.3}\protected@file@percent }
-\newlabel{fig:snapshot}{{3}{5}{A $300$ bee structure ($\alpha = \beta = \sfrac {3}{5}$)}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Bee Count}{5}{subsection.4.1}\protected@file@percent }
-\newlabel{section:bee_count}{{4.1}{5}{Bee Count}{subsection.4.1}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Diameter against depth $z$}}{5}{figure.4}\protected@file@percent }
-\newlabel{fig:count_diameter_against_depth}{{4}{5}{Diameter against depth $z$}{figure.4}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Density $\rho $ against depth $z$}}{5}{figure.5}\protected@file@percent }
-\newlabel{fig:count_density_against_depth}{{5}{5}{Density $\rho $ against depth $z$}{figure.5}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Supported weight $W$ against layer mass $M$}}{6}{figure.6}\protected@file@percent }
-\newlabel{fig:count_weight_against_mass}{{6}{6}{Supported weight $W$ against layer mass $M$}{figure.6}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Coefficients of Best Fit}}{6}{figure.7}\protected@file@percent }
-\newlabel{fig:count_power_law}{{7}{6}{Coefficients of Best Fit}{figure.7}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Frequency against attach number}}{6}{figure.8}\protected@file@percent }
-\newlabel{fig:count_distribution}{{8}{6}{Frequency against attach number}{figure.8}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Crawl Rate}{6}{subsection.4.2}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Diameter against depth $z$}}{6}{figure.9}\protected@file@percent }
-\newlabel{fig:crawl_diameter}{{9}{6}{Diameter against depth $z$}{figure.9}{}}
 \citation{peleg2018collective}
 \citation{heinrich1981mechanisms}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Density $\rho $ against depth $z$}}{7}{figure.10}\protected@file@percent }
-\newlabel{fig:crawl_density}{{10}{7}{Density $\rho $ against depth $z$}{figure.10}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Climb Rate}{7}{subsection.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces Diameter against depth $z$}}{7}{figure.11}\protected@file@percent }
-\newlabel{fig:climb_diameter}{{11}{7}{Diameter against depth $z$}{figure.11}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Density $\rho $ against depth $z$}}{7}{figure.12}\protected@file@percent }
-\newlabel{fig:climb_density}{{12}{7}{Density $\rho $ against depth $z$}{figure.12}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Phase Diagram}{7}{subsection.4.4}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Phase Diagram}}{7}{figure.13}\protected@file@percent }
-\newlabel{fig:phase_diagram}{{13}{7}{Phase Diagram}{figure.13}{}}
-\citation{box1958note}
-\@writefile{lof}{\contentsline {figure}{\numberline {14}{\ignorespaces Heatmap of $a$ coefficients}}{8}{figure.14}\protected@file@percent }
-\newlabel{fig:heatmap}{{14}{8}{Heatmap of $a$ coefficients}{figure.14}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{8}{section.5}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {15}{\ignorespaces A bivouac with a size delta of $\sfrac {1}{2}$}}{8}{figure.15}\protected@file@percent }
-\newlabel{fig:size_delta}{{15}{8}{A bivouac with a size delta of $\sfrac {1}{2}$}{figure.15}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Crawl and Climb Rates}{12}{subsection.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces (a) and (b) illustrate the diameter and density curves respectively as we vary the crawl rate while keeping the climb rate $\beta $ at $\sfrac {2}{5}$ and the number of bees at $250$. Similarly, (c) and (d) are the corresponding curves as we vary the climb rate and maintain a crawl rate $\alpha $ at $\sfrac {2}{5}$. e) is a phase diagram representing the spectrum of morphologies as we vary both $\alpha $ and $\beta $ (containing $100$ bees). }}{13}{figure.5}\protected@file@percent }
+\newlabel{fig:crawl_climb}{{5}{13}{(a) and (b) illustrate the diameter and density curves respectively as we vary the crawl rate while keeping the climb rate $\beta $ at $\sfrac {2}{5}$ and the number of bees at $250$. Similarly, (c) and (d) are the corresponding curves as we vary the climb rate and maintain a crawl rate $\alpha $ at $\sfrac {2}{5}$. e) is a phase diagram representing the spectrum of morphologies as we vary both $\alpha $ and $\beta $ (containing $100$ bees)}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion}{14}{section.5}\protected@file@percent }
 \bibstyle{plain}
 \bibdata{references}
 \bibcite{anderson2002self}{{1}{}{{}}{{}}}
@@ -81,13 +61,21 @@
 \bibcite{fetecau2012mathematical}{{5}{}{{}}{{}}}
 \bibcite{grozinger2014molecules}{{6}{}{{}}{{}}}
 \bibcite{heinrich1981mechanisms}{{7}{}{{}}{{}}}
-\bibcite{lin2003economics}{{8}{}{{}}{{}}}
-\bibcite{peleg2018collective}{{9}{}{{}}{{}}}
-\bibcite{perlin2002improving}{{10}{}{{}}{{}}}
-\bibcite{reynolds1987flocks}{{11}{}{{}}{{}}}
-\bibcite{schmickl2011beeclust}{{12}{}{{}}{{}}}
-\bibcite{shishkov2022strength}{{13}{}{{}}{{}}}
+\bibcite{kmiecik2016coarse}{{8}{}{{}}{{}}}
+\bibcite{lin2003economics}{{9}{}{{}}{{}}}
+\bibcite{peleg2018collective}{{10}{}{{}}{{}}}
+\bibcite{perlin2002improving}{{11}{}{{}}{{}}}
+\bibcite{reynolds1987flocks}{{12}{}{{}}{{}}}
+\bibcite{schmickl2011beeclust}{{13}{}{{}}{{}}}
+\bibcite{shishkov2022strength}{{14}{}{{}}{{}}}
+\citation{box1958note}
+\citation{kmiecik2016coarse}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{17}{section.6}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces A bivouac with a size delta of $\sfrac {1}{2}$}}{17}{figure.6}\protected@file@percent }
+\newlabel{fig:size_delta}{{6}{17}{A bivouac with a size delta of $\sfrac {1}{2}$}{figure.6}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces A bivouac with a mass delta of $\sfrac {1}{2}$}}{17}{figure.7}\protected@file@percent }
+\newlabel{fig:mass_delta}{{7}{17}{A bivouac with a mass delta of $\sfrac {1}{2}$}{figure.7}{}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\@writefile{lof}{\contentsline {figure}{\numberline {16}{\ignorespaces A bivouac with a mass delta of $\sfrac {1}{2}$}}{9}{figure.16}\protected@file@percent }
-\newlabel{fig:mass_delta}{{16}{9}{A bivouac with a mass delta of $\sfrac {1}{2}$}{figure.16}{}}
-\gdef \@abspage@last{9}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces a) Convex hull doesn't capture nuances in certain curves, whereas b) coarse-grained modeling yields a better approximation. c) Curvature heatmap over different combinations of crawl rate $\alpha $ and climb rate $\beta $ where there are $100$ bees. }}{18}{figure.8}\protected@file@percent }
+\newlabel{fig:curvature}{{8}{18}{a) Convex hull doesn't capture nuances in certain curves, whereas b) coarse-grained modeling yields a better approximation. c) Curvature heatmap over different combinations of crawl rate $\alpha $ and climb rate $\beta $ where there are $100$ bees}{figure.8}{}}
+\gdef \@abspage@last{18}
